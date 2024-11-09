@@ -18,6 +18,7 @@ import Productlist from './components/Productlist';
 import Profile from './components/Profile';
 import Register from './components/Register';
 import Thankyou from './components/Thankyou';
+import About from './components/About';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
     createRoutesFromElements(
       <>
       <Route path="/" element={<Homepage />} />
+      <Route path="/About" element={<About />} />
       <Route path="/Cart" element={<Cart />} />
       <Route path="/Checkout" element={<Checkout />} />
       <Route path="/Contact" element={<Contact />} />

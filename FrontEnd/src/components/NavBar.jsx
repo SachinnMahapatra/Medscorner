@@ -14,7 +14,7 @@ const NavBar = () => {
       <span> <NavLink to="/">Home</NavLink> </span>
         <span>Categories <img src="./src/assets/dropDown.svg" className='inline'/></span>
         <span> <NavLink to="/Contact">Contact Us</NavLink> </span>
-        <span>About</span>
+        <span><NavLink to="/About">About us</NavLink></span>
     </div>
 
 
