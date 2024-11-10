@@ -1,4 +1,5 @@
 django
+djangorestframework
 pillow
 rest_framework_simplejwt
 djangorestframework-simplejwt
