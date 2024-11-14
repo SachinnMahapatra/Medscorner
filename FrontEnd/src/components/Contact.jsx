@@ -38,6 +38,7 @@ const Contact = () => {
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Your E-mail
             </label>
+            
             <input important
               type="email"
               id="email"

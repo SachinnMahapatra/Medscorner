@@ -1,9 +1,14 @@
 import React from 'react'
+import NavBar from './NavBar'
 
 const Checkout = () => {
-  return (
-    <div>Checkout</div>
-  )
+  return <>
+    <NavBar/>
+    
+
+
+    
+  </>
 }
 
 export default Checkout
