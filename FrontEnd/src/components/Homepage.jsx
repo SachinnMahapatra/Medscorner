@@ -1,76 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import Footer from './Footer';
 import Faq from './Faq';
+import axios from 'axios';
+import ProductCard from './ProductCard';
 
-const products = [
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-  {
-    name: "product name",
-    price: "$100",
-    image: "./src/assets/hero.jpg"
-  },
-]
+
+
+
+
 
 
 function Homepage() {
+
+  const [products, setProducts] = useState([]);
+
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/products');
+        console.log(response)
+        if (!response.status == 200) {
+          throw new Error('Failed to fetch products');
+        }
+
+        setProducts(response.data);
+      } catch (error) {
+        console.log(error.message)
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+
+
   // bg-slate-400
   return <>
     <div className="hero  p-2 lg:h-[100dvh]">
       <NavBar />
-    <img src="./src/assets/slider-bg.jpg" alt="" className='absolute top-0 z-[-1] lg:h-[100dvh] w-[100dvw] object-cover left-0'/>
+      <img src="../src/assets/slider-bg.jpg" alt="" className='absolute top-0 z-[-1] lg:h-[100dvh] w-[100dvw] object-cover left-0' />
       <h2 className="text-5xl font-extrabold text-center mt-28">MedsCorner</h2>
       <p className='text-center max-w-[750px] m-auto mt-7'>Welcome to "MedsCorner" - Your Trusted Online Medical Store
-<br/>
-<p className='text-2xl font-bold'>
-"Buy with confidence, care delivered to your door"
-</p>
+        <br />
+        <p className='text-2xl font-bold'>
+          "Buy with confidence, care delivered to your door"
+        </p>
 
-</p>
+      </p>
 
       <label className="flex items-center w-fit m-auto input input-bordered rounded-full border-red-700 border-2 px-2 py-1 mt-7 bg-white mb-28">
         <input type="text" className="inline max-w-60 h-max " placeholder="Search" />
@@ -84,13 +62,15 @@ function Homepage() {
       <div className='flex gap-3 mt-9 overflow-auto scroll-smooth no-scrollbar md:scroll-auto md:flex-wrap justify-center'>
 
         {
-          products.map((p) => (
+
+          products && products.map((p) => (
             <div className="card shrink-0">
-              <img src={p.image} alt="" className='h-[20vh]  w-[25vw] md:h-[320px] md:w-[260px] object-cover rounded-lg' />
+              <img src={`http://127.0.0.1:8000/${p.image}`} alt="" className='h-[20vh]  w-[25vw] md:h-[320px] md:w-[260px] object-cover rounded-lg' />
               <p className="title pl-2">{p.name}</p>
-              <p className="price pl-2">{p.price}</p>
+              <p className="price pl-2">₹{p.price}</p>
             </div>
           ))
+
         }
 
       </div>
@@ -135,34 +115,43 @@ function Homepage() {
         <p><h3 className='text-3xl font-bold py-2'>Most Popular Products</h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde repudiandae facilis laudantium!</p>
         <button className='rounded-full bg-black text-white text-lg w-60 h-14'>View All <img src="./src/assets/right.svg" alt=">" className='inline' /></button>
       </div>
+
       <div className='flex gap-3 mt-9 overflow-auto scroll-smooth no-scrollbar md:scroll-auto md:flex-wrap justify-center'>
 
         {
-          products.map((p) => (
+          products && products.map((product) => (
             <div className="card shrink-0">
-              <img src={p.image} alt="" className='h-[20vh]  w-[25vw] md:h-[320px] md:w-[260px] object-cover rounded-lg' />
-              <p className="title pl-2">{p.name}</p>
-              <p className="price pl-2">{p.price}</p>
+              <img src={`http://127.0.0.1:8000/${product.image}`} alt="" className='h-[20vh]  w-[25vw] md:h-[320px] md:w-[260px] object-cover rounded-lg' />
+              <p className="title pl-2">{product.name}</p>
+              <div className='flex justify-between px-2'>
+                <p>
+                  ₹{product.price}
+                </p>
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.5 0V13M0 6.5H13" stroke="#A58F83" />
+                </svg>
+              </div>
             </div>
           ))
         }
 
       </div>
+      <ProductCard products={products} />
 
     </div>
 
-<div className="promo">
+    <div className="promo">
 
-  promo coming soon
-</div>
-
-
-<Faq/>
+      promo coming soon
+    </div>
 
 
+    <Faq />
 
 
-<Footer/>
+
+
+    <Footer />
   </>
 
 }
