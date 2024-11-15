@@ -5,7 +5,7 @@ const NavBar = () => {
   return <>
     <nav className='flex justify-between'>
     <div className="left ">
-      <img src="./src/assets/logo.svg" alt="naa" />
+      <img src="./src/assets/logo.svg" alt="logo" />
 
 </div>
 
