@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User
+from .models import User, Cart
 from .serializer import *
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -19,9 +19,7 @@ from rest_framework.generics import GenericAPIView, RetrieveAPIView
 def get_users(request):
     Users = User.objects.all()
     serializer = UserSerializer(Users, many=True)
-    
     return Response(serializer.data)
-
 
 
 
@@ -91,6 +89,81 @@ def user_details(request):
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(['GET','POST','PUT','DELETE'])
+# @permission_classes((IsAuthenticated,))
+def editCart(request):
+    try:
+        user = request.user
+        # user = 5
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        cart = Cart.objects.filter(user=user)
+        serializer = cartSerializer(cart, many=True)
+        return Response(serializer.data)
+    
+
+    elif request.method == 'POST':
+        data = request.data.copy()
+        data['user'] = user
+        serializer = cartSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'error':'Failed to add'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    elif request.method == 'PUT':
+        item = request.data.get('item')
+        if not item:
+            return Response({'error': 'Item not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        userCart = Cart.objects.filter(user=user, item=item).first()
+        if not userCart:
+            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
+                
+        serializer = cartSerializer(userCart,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+   
+    elif request.method == 'DELETE':
+    # Ensure the user is authenticated
+        if not user.is_authenticated:
+            return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Get the item or cart entry to delete
+        item = request.data.get('item')  # Assuming 'item' is passed in the request
+        if not item:
+            return Response({'error': 'Item not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Find the cart entry
+        cart_entry = Cart.objects.filter(user=user, item=item).first()
+        if not cart_entry:
+            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Delete the cart entry
+        cart_entry.delete()
+        return Response({'message': 'Cart item deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+    
+
+
+
+
+
+
+
+
+
+
+
 
 
 

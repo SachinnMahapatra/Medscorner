@@ -1,4 +1,4 @@
-from .models import User
+from .models import *
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -49,3 +49,8 @@ class UserLoginSerializer(serializers.Serializer):
             print("Login success!")
             return user
         raise serializers.ValidationError("Incorrect Credentials!")    
+    
+class cartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = "__all__"

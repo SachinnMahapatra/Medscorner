@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+
 # Create your models here.
 
 class User(AbstractUser):
@@ -13,12 +14,18 @@ class User(AbstractUser):
     last_order = models.TextField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     number = models.CharField(null=True, max_length=13, blank=True)
-    
+    # cart = models.TextField(null=True, blank=True)
 
     USERNAME_FIELD='email'
     REQUIRED_FIELDS=['username']
 
 
+class Cart(models.Model):
+    # from products.models import products
+    
+    item=models.ForeignKey("products.products",on_delete=models.CASCADE, null=True, blank=True)
+    quantity = models.IntegerField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
-
+    
 
