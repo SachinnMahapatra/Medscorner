@@ -25,8 +25,8 @@ const ProductCard = ({ product }) => {
 
 
         
-          <NavLink to={`/ProductDetails/${product._id}`} className="card shrink-0  w-[25vw] md:w-[250px]">
-            <img src={`http://127.0.0.1:8000/${product.image}`} alt="" className='h-[20vh]  w-[25vw]  md:h-[320px] md:w-[250px] object-cover rounded-lg' />
+          <NavLink to={`/ProductDetails/${product.id}`} className="card shrink-0  w-[25vw] md:w-[250px]">
+            <img src={`http://127.0.0.1:8000/${product.image}`} alt="" className='h-[20vh]  w-[25vw] border  md:h-[320px] md:w-[250px] object-cover rounded-lg' />
             <p className="title pl-2">{product.name}</p>
             <div className='flex justify-between px-2'>
               <p>

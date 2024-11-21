@@ -28,6 +28,7 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
+
       <Route path="/" element={<Homepage />} />
       <Route path="/About" element={<About />} />
       <Route path="/Cart" element={<Cart />} />
@@ -41,7 +42,6 @@ function App() {
       <Route path="/Register" element={<Register />} />
       <Route path="/Thankyou" element={<Thankyou />} />
       
-
       
       {/* errorElement={<Errorpage errorCode={404} />} */}
         {/* <Route
@@ -57,7 +57,7 @@ function App() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} />  
     
     </>
   )

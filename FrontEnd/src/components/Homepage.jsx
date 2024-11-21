@@ -15,7 +15,7 @@ import { NavLink } from 'react-router-dom';
 function Homepage() {
 
   const [products, setProducts] = useState([]);
-  const[featuredProducts, setFeaturedProducts] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
 
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function Homepage() {
         }
 
         setProducts(response.data);
-        setFeaturedProducts(response.data.slice(0,12));
+        setFeaturedProducts(response.data.slice(0, 12));
       } catch (error) {
         console.log(error.message)
       }
@@ -40,8 +40,8 @@ function Homepage() {
 
   // bg-slate-400
   return <>
-    <div className="hero  p-2 md:h-[100dvh] h-fit ">
-      <NavBar />
+    <NavBar />
+    <div className="hero p-2 md:h-[100dvh] h-fit ">
       <img src="../src/assets/slider-bg.jpg" alt="" className='absolute top-0 z-[-1] h-[450px] md:h-[100dvh] w-[100dvw] object-cover left-0' />
       <h2 className="text-5xl font-extrabold text-center mt-28">MedsCorner</h2>
       <p className='text-center max-w-[750px] m-auto mt-7'>Welcome to "MedsCorner" - Your Trusted Online Medical Store
@@ -59,7 +59,7 @@ function Homepage() {
     </div>
 
     <div className="featured lg:p-20 mt-11 p-2">
-    <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center">
         <p><h3 className='text-3xl font-bold py-2'>Featured Products</h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde repudiandae facilis laudantium!</p>
         <NavLink to="/productlist" className='rounded-full inline-block text-center content-center bg-black text-white text-lg w-60 h-14'>View All <img src="./src/assets/right.svg" alt=">" className='inline' /></NavLink>
       </div>
@@ -77,8 +77,8 @@ function Homepage() {
 
         } */}
         {
-          featuredProducts && featuredProducts.map((product)=>(
-            <ProductCard product={product}/>
+          featuredProducts && featuredProducts.map((product) => (
+            <ProductCard product={product} />
           ))
         }
       </div>
@@ -126,13 +126,13 @@ function Homepage() {
 
       <div className='flex gap-3 mt-9 overflow-auto scroll-smooth no-scrollbar md:scroll-auto md:flex-wrap md:justify-center md:max-h-[800px] md:overflow-hidden'>
 
-      {
-          products && products.map((product)=>(
-            <ProductCard product={product}/>
+        {
+          products && products.map((product) => (
+            <ProductCard product={product} />
           ))
         }
 
-      {/* <ProductCard products={products} /> */}
+        {/* <ProductCard products={products} /> */}
       </div>
 
     </div>

@@ -5,7 +5,7 @@ const Checkout = () => {
   return <>
     <NavBar/>
     
-
+    checkout
 
     
   </>
