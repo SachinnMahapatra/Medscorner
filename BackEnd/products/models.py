@@ -34,12 +34,16 @@ class products(models.Model):
     total_reviews = models.IntegerField(null=True, default=0, blank=True)
 
 
+    def __str__(self):
+        return self.name
+
 class review(models.Model):
     rating = models.IntegerField(null=True, blank=True)
     review = models.TextField(null=True , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     product = models.ForeignKey(products, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-
+    def __str__(self):
+        return self.user.username
 
 
