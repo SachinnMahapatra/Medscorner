@@ -152,29 +152,83 @@ def rating(request,pk):
     elif request.method == 'PUT':
         serializer = ratingserializer(order, data=request.data)
         if serializer.is_valid():
-            try: 
-                data = serializer.validated_data['review']
-                review.objects.create(**serializer.validated_data)
-            except KeyError:
-                print("Key 'review' not found.")
+            validated_data = serializer.validated_data
+            review_data = validated_data.get('review')
+            rating_data = validated_data.get('rating')
+            product_instance = products.objects.get(pk=order.product.id)
+            user_id = validated_data.get('user').id
+            product_id = validated_data.get('product').id
 
-            try: 
-                data = serializer.validated_data['rating']
-                product_id = order.product.id
-                product_instance = products.objects.get(pk=product_id)
-                if product_instance.total_rating==0:
-                    product_instance.rating=data
-                    product_instance.total_rating=1
+            # Ensure user and product match the order
+            if order.user.id == user_id and order.product.id == product_id:
+                # Check if a review already exists
+                existing_review = review.objects.filter( user=user_id, product=product_id ).first()
+
+                if existing_review:
+                    # Edit the existing review
+
+                    # Update product rating based on the updated review
+                    total_reviews = product_instance.total_rating
+                    
+                    product_instance.rating = (
+                        (product_instance.rating * total_reviews - existing_review.rating + rating_data) / total_reviews)
+                    
+                    existing_review.rating = rating_data
+                    existing_review.review = review_data
+                    existing_review.save()
                 else:
-                    product_instance.rating=(((product_instance.rating*product_instance.total_rating)+data)/(product_instance.total_rating+1))
-                    product_instance.total_rating+=1
-            except KeyError:
-                print("key rating is not found. ")
-            product_instance.save()
+                    # Create a new review
+                    review.objects.create(**validated_data)
+                    if product_instance.total_rating == 0:
+                        product_instance.rating = rating_data
+                        product_instance.total_rating = 1
+                    else:
+                        product_instance.rating = (
+                            (product_instance.rating * product_instance.total_rating + rating_data)/(product_instance.total_rating + 1)
+                        )
+                        product_instance.total_rating += 1
+
+                product_instance.save()
+            else:
+                return Response(
+                    {"error": "Invalid user or product association with order."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Save the serializer and return response
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Handle invalid serializer case
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    
+    
     elif request.method == 'DELETE':
         order.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    #try
+    # elif request.method == 'POST':
+    #     serializer = ratingserializer(order, data=request.data)
+    #     if serializer.is_valid():
+    #         try: 
+    #             data = serializer.validated_data['review']
+    #             review.objects.create(**serializer.validated_data)
+    #         except KeyError:
+    #             print("Key 'review' not found.")
+
+    #         try: 
+    #             data = serializer.validated_data['rating']
+    #             product_id = order.product.id
+    #             product_instance = products.objects.get(pk=product_id)
+    #             if product_instance.total_rating==0:
+    #                 product_instance.rating=data
+    #                 product_instance.total_rating=1
+    #             else:
+    #                 product_instance.rating=(((product_instance.rating*product_instance.total_rating)+data)/(product_instance.total_rating+1))
+    #                 product_instance.total_rating+=1
+    #         except KeyError:
+    #             print("key rating is not found. ")
+    #         product_instance.save()
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

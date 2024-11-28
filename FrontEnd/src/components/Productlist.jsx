@@ -19,7 +19,7 @@ function Productlist() {
         }
 
         setProducts(response.data);
-        setFeaturedProducts(response.data.slice(0,12));
+        // setFeaturedProducts(response.data.slice(0,12));
       } catch (error) {
         console.log(error.message)
       }
@@ -31,12 +31,12 @@ function Productlist() {
   return (
     <>
       <NavBar />
-      product list is to ready yet
+      product list is not ready yet
       <div className='flex gap-3 mt-9 overflow-scroll scroll-smooth no-scrollbar md:scroll-auto md:flex-wrap md:justify-center  md:overflow-hidden'>
 
       {
           products && products.map((product)=>(
-            <ProductCard product={product}/>
+            <ProductCard key={product.id} product={product}/>
           ))
         }
         </div>

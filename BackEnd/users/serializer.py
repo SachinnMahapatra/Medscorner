@@ -51,6 +51,10 @@ class UserLoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Incorrect Credentials!")    
     
 class cartSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(source='item.image',read_only=True)
+    price = serializers.IntegerField(source='item.price', read_only=True)
+    name = serializers.CharField(source='item.name', read_only=True)
+    
     class Meta:
         model = Cart
-        fields = "__all__"
+        fields = ['id','item','quantity','user','price','image','name']

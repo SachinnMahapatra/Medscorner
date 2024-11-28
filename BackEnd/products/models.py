@@ -15,10 +15,10 @@ class products(models.Model):
     expiry_date = models.DateField(null=True , blank=True)
     uses = models.TextField(null=True , blank=True)
     side_effects = models.TextField(null=True , blank=True)
-
+    quantity = models.CharField(max_length=200,null=True,blank=True)
     #added
     prescription_required = models.BooleanField(default=False)
-    dosage = models.CharField(max_length=20, null=True, blank=True)  # e.g., 500mg, 10ml
+    dosage = models.CharField(max_length=200, null=True, blank=True)  # e.g., 500mg, 10ml
     image = models.ImageField(upload_to='uploads/products/', null=True, blank=True)
     image2 = models.ImageField(upload_to='uploads/products/', null=True, blank=True)
     image3 = models.ImageField(upload_to='uploads/products/', null=True, blank=True)

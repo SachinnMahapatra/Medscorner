@@ -1,10 +1,11 @@
 import React from 'react'
 import { useState } from "react";
 import NavBar from "./NavBar"
-import { Link, NavLink, Navigate } from "react-router-dom"
+import { Link, NavLink, Navigate, useNavigate } from "react-router-dom"
 import axios from "axios";
 
 function Login() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -49,6 +50,9 @@ function Login() {
       setSuccessMessage("Login Successful!")
       localStorage.setItem("accessToken", response.data.tokens.access);
       localStorage.setItem("refreshToken", response.data.tokens.refresh)
+      setTimeout(() => {
+        navigate(-1)
+      }, 2000);
     }
     catch (error) {
       console.log("Error during Login!", error.response?.data);
@@ -81,10 +85,12 @@ function Login() {
 
   // };
 
+  
   return (
     <>
       <NavBar />
-      {successMessage?<Navigate replace to={"/"}/>:<pre/>}
+      {/* {successMessage?<Navigate replace to={"/"}/>:<pre/>} */}
+      
       <img src="./src/assets/slider-bg.jpg" alt="" className='absolute top-0 z-[-1] lg:h-[100dvh] w-[100dvw] object-cover left-0' />
 
       <div className="flex items-center justify-start min-h-screen p-2 lg:p-20">

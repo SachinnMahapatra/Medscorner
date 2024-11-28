@@ -57,9 +57,17 @@ def login(request):
 def logout(request):
     try:
         refresh_token = request.data["refresh"]
+        if not refresh_token:
+            return Response(
+                {"error": "Refresh token is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         token = RefreshToken(refresh_token)
+        
         token.blacklist()
+
         return Response(status=status.HTTP_205_RESET_CONTENT)
+    
     except Exception as e:
         return Response(status= status.HTTP_400_BAD_REQUEST)
         
@@ -69,7 +77,6 @@ def logout(request):
 @api_view(['GET','PUT','DELETE'])
 @permission_classes((IsAuthenticated,))
 def user_details(request):
-   
     try:
         user = request.user
     except User.DoesNotExist:
@@ -92,12 +99,12 @@ def user_details(request):
 
 
 
-@api_view(['GET','POST','PUT','DELETE'])
-# @permission_classes((IsAuthenticated,))
+@api_view(['GET','PUT','DELETE'])
+@permission_classes((IsAuthenticated,))
 def editCart(request):
     try:
-        user = request.user
-        # user = 5
+        user = request.user.id
+        # user = 1
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -107,25 +114,34 @@ def editCart(request):
         return Response(serializer.data)
     
 
-    elif request.method == 'POST':
-        data = request.data.copy()
-        data['user'] = user
-        serializer = cartSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'error':'Failed to add'}, status=status.HTTP_400_BAD_REQUEST)
+    # elif request.method == 'POST':
+    #     data = request.data.copy()
+    #     data['user'] = user
+    #     serializer = cartSerializer(data=data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response({'error':'Failed to add'}, status=status.HTTP_400_BAD_REQUEST)
 
 
     elif request.method == 'PUT':
         item = request.data.get('item')
+        print(item,user)
         if not item:
             return Response({'error': 'Item not provided'}, status=status.HTTP_400_BAD_REQUEST)
         
         userCart = Cart.objects.filter(user=user, item=item).first()
         if not userCart:
-            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
-                
+            data = request.data.copy()
+            data['user'] = user
+            serializer = cartSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'error':'Failed to add'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
+          
         serializer = cartSerializer(userCart,data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -134,9 +150,6 @@ def editCart(request):
     
    
     elif request.method == 'DELETE':
-    # Ensure the user is authenticated
-        if not user.is_authenticated:
-            return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
         
         # Get the item or cart entry to delete
         item = request.data.get('item')  # Assuming 'item' is passed in the request
