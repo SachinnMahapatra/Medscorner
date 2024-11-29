@@ -6,7 +6,8 @@ from .models import User, Cart
 from .serializer import *
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from orders.models import Order
+from orders.serializers import orderSerializer
 
 
 
@@ -21,6 +22,21 @@ def get_users(request):
     serializer = UserSerializer(Users, many=True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def get_past_orders(request):
+    try:
+        user = request.user.id
+        # user = 1
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    orders = Order.objects.filter(user=user)
+    if(orders):
+        serializer = orderSerializer(orders, many=True)
+        return Response(serializer.data)
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])

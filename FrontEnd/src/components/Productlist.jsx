@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "./ProductCard";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import NavBar from "./NavBar";
 
 const Productlist = () => {
@@ -14,7 +14,7 @@ const Productlist = () => {
   
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState(null);
-
+  const navigate=useNavigate()
 
 
   useEffect(() => {
@@ -93,6 +93,16 @@ const Productlist = () => {
   return ( 
   <>
   <NavBar/>
+  <button onClick={() => navigate(-1)} className="ml-2">
+        <svg className='inline' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
+          <path d="M3.99982 11.9998L19.9998 11.9998" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8.99963 17C8.99963 17 3.99968 13.3176 3.99966 12C3.99965 10.6824 8.99966 7 8.99966 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <p className='inline'> Go Back </p>
+      </button>
+
+
+      
     <div className="flex flex-col lg:flex-row">
       {/* Sidebar */}
       <aside className="w-full lg:w-1/4 p-4 border-b lg:border-b-0 lg:border-r">

@@ -164,7 +164,7 @@ function Homepage() {
 
           <Link to="/productlist/Hair Care Products" className="card shrink-0 relative rounded-lg cursor-pointer">
             <img src='./src/assets/hairCare.jpeg' alt="" className='h-[14vh]  w-[30vw] md:h-[250px] md:w-[390px] object-cover rounded-xl mt-[2vh]' />
-            <p className="title absolute top-1 left-1 text-xl font-bold">Hair Care</p>
+            <p className="title absolute top-3 left-1 text-xl font-bold">Hair Care</p>
           </Link>
         </div>
 

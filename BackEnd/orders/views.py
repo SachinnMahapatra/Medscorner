@@ -27,11 +27,18 @@ def get_orders(request):
 
 
 @api_view(['POST'])
-# @permission_classes((IsAuthenticated,IsAdminUser))
+@permission_classes((IsAuthenticated,))
 def place_order(request):
     # Deserialize the incoming order data
-    serializer = orderSerializer(data=request.data)
-
+    try:
+        user=request.user.id
+        # user=1
+    except User.DoesNotExist:
+        return ResourceWarning(status=status.HTTP_401_UNAUTHORIZED)
+    data = request.data.copy()
+    data['user'] = user
+    serializer = orderSerializer(data=data)
+    
     if serializer.is_valid():
         product_id = serializer.validated_data['product'].id
         product_instance = products.objects.get(pk=product_id)
@@ -46,15 +53,7 @@ def place_order(request):
 
         # Save the order
         serializer.save()
-        #adding the id to the user object
-        user_id = serializer.data['user']
-        user_instance = User.objects.get(pk=user_id)
-        if not user_instance.last_order:
-            user_instance.last_order=str(serializer.data['id'])+','
-        else:
-            user_instance.last_order+=str(serializer.data['id'])+','
-        user_instance.save()
-
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
