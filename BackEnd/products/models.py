@@ -4,7 +4,14 @@ from users.models import User
 
 # Create your models here.
 class products(models.Model):
-    category = models.CharField(null=True, max_length=100, blank=True)
+    category_choices = [
+        ("General medicine","General medicine"),
+        ("Hair care products","Hair care products"),
+        ("Baby care products","Baby care products"),
+        ("Skin Care Products","Skin Care Products")
+    ]
+    category = models.CharField(choices=category_choices, max_length=50,default="General medicine")
+    # category = models.CharField(null=True, max_length=100, blank=True)
     name = models.CharField(null=True, max_length=200, blank=True)
     # image = models.URLField(null=True, max_length=600 , blank=True)
     price = models.IntegerField(null=True, blank=True)
