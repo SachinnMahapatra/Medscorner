@@ -228,15 +228,15 @@ const ProductDetails = () => {
   return <>
 
     <NavBar />
-    <div className="lg:px-20 p-2  ">
-
-      <button onClick={() => navigate(-1)}>
+      <button className="lg:px-20 p-2" onClick={() => navigate(-1)}>
         <svg className='inline' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
           <path d="M3.99982 11.9998L19.9998 11.9998" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M8.99963 17C8.99963 17 3.99968 13.3176 3.99966 12C3.99965 10.6824 8.99966 7 8.99966 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <p className='inline'> Go Back </p>
       </button>
+    <div className="lg:px-20 p-2  ">
+
 
       <div className='mt-5 flex flex-col md:flex-row'>
         <div className="photo flex gap-5 w-[100vw] justify-center md:w-fit md:justify-start flex-col-reverse md:flex-row">
@@ -355,9 +355,9 @@ const ProductDetails = () => {
 
                 {/* Buttons */}
                 <div className="flex flex-col space-y-4 mb-6">
-                  <button className="w-full border border-black text-black py-3 rounded-lg text-center font-medium">
+                  <Link to={`/Checkout/${id}`} className="w-full border border-black text-black py-3 rounded-lg text-center font-medium">
                     Buy Now
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Shipping Info */}

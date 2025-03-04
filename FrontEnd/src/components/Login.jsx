@@ -138,7 +138,7 @@ function Login() {
                 name='password'
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter 6 character or more"
+                placeholder="Enter 8 character or more"
               />
             </div>
             <div className="flex items-center justify-between">

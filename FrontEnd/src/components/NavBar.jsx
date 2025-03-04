@@ -60,13 +60,12 @@ useEffect(()=>{
 
       <div className="middle flex gap-1 sm:gap-5 lg:gap-7 justify-center">
         <span> <NavLink to="/">Home</NavLink> </span>
-        <span>Categories
+        {/* <span>Categories
           <svg className='inline' width="10" height="6" viewBox="0 0 10 6" fill="black" xmlns="http://www.w3.org/2000/svg">
             <path d="M0.59961 1L4.59961 5L8.59961 1" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
 
-          {/* <img src="./src/assets/dropDown.svg" /> */}
-        </span>
+        </span> */}
         <span> <NavLink to="/Contact">Contact Us</NavLink> </span>
         <span><NavLink to="/About">About us</NavLink></span>
       </div>

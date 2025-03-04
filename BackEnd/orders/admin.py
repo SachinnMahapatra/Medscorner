@@ -4,7 +4,7 @@ from .models import Order
 
 class OrderAdmin(admin.ModelAdmin):
     
-    list_display = ['product','quantity','status']
+    list_display = ['product','quantity','status','date']
     sortable_by = ['status']
     
 admin.site.register(Order,OrderAdmin)

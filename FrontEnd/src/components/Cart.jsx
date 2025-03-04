@@ -58,7 +58,6 @@ const Cart = () => {
         };
 
         const response = await axios.get("http://127.0.0.1:8000/api/cart", config)
-
         setCartItems(response.data)
         // console.log(response.data)
       }
@@ -155,6 +154,13 @@ const Cart = () => {
         !isLoggedIn &&
         <h2 className="text-center font-bold text-3xl">Please Log In First</h2>
       }
+      <button className="lg:px-20 p-2" onClick={() => navigate(-1)}>
+        <svg className='inline' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
+          <path d="M3.99982 11.9998L19.9998 11.9998" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8.99963 17C8.99963 17 3.99968 13.3176 3.99966 12C3.99965 10.6824 8.99966 7 8.99966 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <p className='inline'> Go Back </p>
+      </button>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Shopping Cart
@@ -227,9 +233,9 @@ const Cart = () => {
                 <h3 className="text-lg font-semibold text-gray-700">
                   Total: ₹{calculateTotal().toFixed(2)}
                 </h3>
-                <button className="mt-4 sm:mt-0 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                <Link to="/Checkout/-1" className="mt-4 sm:mt-0 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
                   Proceed to Checkout
-                </button>
+                </Link>
               </div>
             </div>
           )}

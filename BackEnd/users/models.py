@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from datetime import timedelta 
+from django.utils import timezone
 
 
 # Create your models here.
@@ -29,3 +31,9 @@ class Cart(models.Model):
     def __str__(self):
         return ("user: "+self.user.username )
 
+class Otp(models.Model):
+    email = models.EmailField()
+    otp = models.IntegerField()
+    expiry = models.DateTimeField(default = timezone.now() + timedelta(minutes=5))
+    def __str__(self):
+        return self.email

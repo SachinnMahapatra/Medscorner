@@ -2,13 +2,15 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User, Cart
+from .models import User, Cart, Otp
 from .serializer import *
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from orders.models import Order
 from orders.serializers import orderSerializer
-
+import random
+from django.utils import timezone
+from django.core.mail import send_mail
 
 
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
@@ -38,23 +40,76 @@ def get_past_orders(request):
         return Response(serializer.data)
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['POST'])
+def generate_otp(request):
+    otp = random.randint(111111,999999)
+    data = request.data
+    data["otp"] = otp
+    serializer = otpSerializer(data=data)
+
+    
+    if serializer.is_valid():
+        # email variables
+        subject="Email Verification"
+        message = f"""
+                Hey, 
+                    Welcome to MedsCroner ,
+
+                here is your OTP {otp} for MedsCorner Verification
+                it expires in 5 minutes, 
+                                    
+                        """
+        sender = "apnasourav08@gmail.com"
+        receiver = [serializer.validated_data["email"]]
+             
+        # send email
+        send_mail(
+                subject,
+                message,
+                sender,
+                receiver,
+                fail_silently=True,
+            )
+            
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def create_user(request):
     serializer = UserRegistrationSerializer(data=request.data)
-    if serializer.is_valid():
+    
+
+    otps = otpSerializer(data=request.data)
+    if serializer.is_valid() and otps.is_valid():
+        otp = Otp.objects.filter(email=serializer.validated_data["email"]).last()
+        
+        if not otp :
+            return Response(data="Please Send OTP First  !!",status=status.HTTP_400_BAD_REQUEST) 
+        
+        # if not otp.expiry>timezone.now():
+        #     return Response(data="Otp Expired ! Please Resend !",status=status.HTTP_400_BAD_REQUEST)
+        
+        if not otp.otp==otps.validated_data["otp"] :
+            return Response(data="Invalid Otp ! Try resending !",status=status.HTTP_400_BAD_REQUEST)
+ 
+
         user = serializer.save()
         token = RefreshToken.for_user(user)
         data = serializer.data
         data["tokens"] = {"refresh":str(token),
                           "access": str(token.access_token)}
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+# @permission_classes((AllowAny,))
 def login(request):
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
@@ -95,6 +150,7 @@ def logout(request):
 def user_details(request):
     try:
         user = request.user
+        
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -130,15 +186,7 @@ def editCart(request):
         return Response(serializer.data)
     
 
-    # elif request.method == 'POST':
-    #     data = request.data.copy()
-    #     data['user'] = user
-    #     serializer = cartSerializer(data=data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response({'error':'Failed to add'}, status=status.HTTP_400_BAD_REQUEST)
-
+    
 
     elif request.method == 'PUT':
         item = request.data.get('item')
@@ -181,40 +229,3 @@ def editCart(request):
         cart_entry.delete()
         return Response({'message': 'Cart item deleted'}, status=status.HTTP_204_NO_CONTENT)
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class UserLogoutAPIView(GenericAPIView):
-#     permission_classes = (IsAuthenticated,)
-    
-#     def post(self, request, *args, **kwargs):
-#         try:
-#             refresh_token = request.data["refresh"]
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-#             return Response(status=status.HTTP_205_RESET_CONTENT)
-#         except Exception as e:
-#             return Response(status= status.HTTP_400_BAD_REQUEST)
-
-# class UserInfo(RetrieveAPIView):
-#     permission_classes = (IsAuthenticated,)
-#     serializer_class = UserSerializer
-    
-#     def get_object(self):
-#         return self.request.user
-    

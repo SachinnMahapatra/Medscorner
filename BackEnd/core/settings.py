@@ -143,8 +143,8 @@ REST_FRAMEWORK = {
  )
 }
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=50),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=50),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -189,3 +189,14 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL ='users.User'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# For email Otp 
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'apnasourav08@gmail.com'
+EMAIL_HOST_PASSWORD = 'vabl gtyz lkbm oimo'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False 

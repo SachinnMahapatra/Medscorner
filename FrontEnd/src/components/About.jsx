@@ -14,10 +14,10 @@ She is our visionary leader and UI/UX designer, focused on crafting an intuitive
 He serves as our backend developer, responsible for building a robust and secure framework.Hisexpertise in coding and database management ensures that our website runs smoothly and efficiently, providing users with a seamless experience.
 
 <br/><br/><b>Somasri Sau [University roll 30101222064]</b><br/><br/>
-He is our frontend developer, transforming our ideas into a responsive and visually appealing site. With a keen eye for detail and a passion for modern web technologies, he brings our designs to life, making sure our site is both user-friendly and engaging.
+He takes on the role of project content strategist. With strong organizational skills, he keeps us on track and ensures that our content is informative and relevant. His focus on communication and collaboration helps us achieve our goals efficiently.
 
 <br/><br/><b>Sourav Mondal [University roll 30101222017]</b><br/><br/>
-He takes on the role of project content strategist. With strong organizational skills, he keeps us on track and ensures that our content is informative and relevant. His focus on communication and collaboration helps us achieve our goals efficiently.
+He is our frontend developer, transforming our ideas into a responsive and visually appealing site. With a keen eye for detail and a passion for modern web technologies, he brings our designs to life, making sure our site is both user-friendly and engaging.
 
 <br/><br/><b>SK Aman Hossain [University roll 30101222047]</b><br/><br/>
 He takes on the role of project content strategist. With strong organizational skills, he keeps us on track and ensures that our content is informative and relevant. His focus on communication and collaboration helps us achieve our goals efficiently.

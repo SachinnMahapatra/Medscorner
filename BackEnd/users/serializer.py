@@ -16,7 +16,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id","username", "email","name", "password1", "password2")
+        fields = ("id","username", "email", "password1", "password2")
         extra_kwargs = {"password": {"write_only": True}}
 
     def validate(self, attrs):
@@ -54,7 +54,12 @@ class cartSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(source='item.image',read_only=True)
     price = serializers.IntegerField(source='item.price', read_only=True)
     name = serializers.CharField(source='item.name', read_only=True)
-    
+    prescription_required = serializers.BooleanField(source='item.prescription_required',read_only=True)
     class Meta:
         model = Cart
-        fields = ['id','item','quantity','user','price','image','name']
+        fields = ['id','item','quantity','prescription_required','user','price','image','name']
+
+class otpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Otp
+        fields = "__all__"

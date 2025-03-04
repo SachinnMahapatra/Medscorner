@@ -9,4 +9,5 @@ urlpatterns = [
     path('users/details/',user_details,name='get_user'),
     path('users/orders/',get_past_orders,name='get_past_orders'),
     path('cart/',editCart,name='edit_cart'),
+    path('otp/',generate_otp,name='generate_otp'),
 ]

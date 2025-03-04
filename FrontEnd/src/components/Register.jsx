@@ -10,10 +10,11 @@ const Register = () => {
     email: "",
     password1: "",
     password2: "",
+    otp: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(null);
   
 
   const handleChange = (e) => {
@@ -51,6 +52,8 @@ const Register = () => {
       const response = await axios.post("http://127.0.0.1:8000/api/users/create", formData)
       console.log("Success!", response.data)
       setSuccessMessage("Registration Successful!")
+      localStorage.setItem("accessToken", response.data.tokens.access);
+      localStorage.setItem("refreshToken", response.data.tokens.refresh);
       setTimeout(() => {
         
       }, 2000);
@@ -72,6 +75,45 @@ const Register = () => {
 
   };
 
+  const handleOtp = async (e) => {
+    e.preventDefault();
+    
+    setError(null)
+    setSuccessMessage(null)
+    // setIsLoading(true);
+    e.target.disabled=true
+    e.target.innerHTML = '<img src="./src/assets/Spinner.svg" alt="Loading" />'
+    if (formData.email==''){
+      setError("Please Provide Email First !")
+      e.target.innerHTML="send"
+      // setIsLoading(false)
+      e.target.disabled=false
+      return
+    }
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/otp/", formData)
+      e.target.disabled="true"
+      for(let i =0 ; i <=60 ; i++){
+        setTimeout(() => {
+          e.target.innerHTML=60-i ;
+          if(i==60){
+            e.target.disabled=false
+            e.target.value = "send"
+          }
+        }, i*1000);
+
+      }
+      
+
+    }catch(error){
+      console.log("Internal Server Error ! Please Retry");
+      setError("Internal Server Error ! Please Retry")
+      e.target.innerHTML="send"
+      e.target.disabled=false
+    }
+    // setIsLoading(false)
+  }
+
   return (
     <>
       <NavBar />
@@ -80,14 +122,14 @@ const Register = () => {
       
       <img src="./src/assets/slider-bg.jpg" alt="" className='absolute top-0 z-[-1] lg:h-[100dvh] w-[100dvw] object-cover left-0' />
 
-      <div className="flex items-center justify-start min-h-screen p-2 lg:p-20">
+      <div className="flex items-center justify-start min-h-screen p-2 lg:p-20 lg:pt-2">
         <div className="px-8 py-6 mx-4 mt-4 text-left  shadow-lg rounded-lg lg:w-1/3">
           <div className="font-bold text-2xl mb-2">Hey, Welcome to MedsCorner</div>
           <p className="text-gray-600 text-sm mb-4 inline-block" >
             Already have an account ?
           </p>
           <p className="underline text-blue-500 inline-block">
-            <NavLink to="/Login" activeClassName="active"> Log in</NavLink>
+            <NavLink to="/Login"> Log in</NavLink>
           </p>
           {error && <p style={{ color: "red" }}>{error}</p>}
           {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
@@ -118,6 +160,8 @@ const Register = () => {
               >
                 Email Address
               </label>
+              <div className="flex w-full">
+
               <input
                 className="shadow appearance-none border rounded-full w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 
@@ -127,6 +171,28 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
+                />
+
+              <button onClick={handleOtp} type='button' className='px-6 border w-fit  rounded-full'>send</button>
+                </div>
+            </div>
+            {/* ---------otp-------- */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="email"
+              >
+                OTP
+              </label>
+              <input
+                className="shadow appearance-none border rounded-full w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                
+                type="text"
+                name='otp'
+                required
+                value={formData.otp}
+                onChange={handleChange}
+                placeholder="We have sent an OTP to your mail"
               />
             </div>
             <div className="mb-6">
@@ -181,7 +247,7 @@ const Register = () => {
               </a>
             </div>
             <div className="flex items-center justify-center mt-4">
-              <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
+              <button type="submit" disabled={isLoading} className="disabled:bg-slate-500 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
                 REGISTER
               </button>
             </div>
@@ -209,4 +275,4 @@ const Register = () => {
   );
 }
 
-export default Register
+export default Register;

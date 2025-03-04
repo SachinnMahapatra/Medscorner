@@ -8,10 +8,6 @@ import { NavLink, Link } from 'react-router-dom';
 
 
 
-
-
-
-
 function Homepage() {
 
   const [products, setProducts] = useState([]);
@@ -55,9 +51,6 @@ function Homepage() {
     // console.log(arr)
   }, [search])
 
-  // useEffect(() => {
-  //   console.log(searchResult)
-  // }, [searchResult])
 
   const handleSearch = (e) => {
     setSearch(e.target.value)
@@ -66,11 +59,11 @@ function Homepage() {
   const submitSearch = () => {
     console.log("search")
   }
-  // bg-slate-400
+  
   return <>
     <NavBar />
     <div className="hero p-2 md:h-[100dvh] h-fit ">
-      <img src="../src/assets/slider-bg.jpg" alt="" className='absolute top-0 z-[-1] h-[450px] md:h-[100dvh] w-[100dvw] object-cover left-0' />
+      <img src="../src/assets/header.jpg" alt="" className='absolute top-0 z-[-1] h-[450px] md:h-[100dvh] w-[100dvw] object-cover left-0' />
       <h2 className="text-5xl font-extrabold text-center mt-28">MedsCorner</h2>
       <p className='text-center max-w-[750px] m-auto mt-7'>Welcome to "MedsCorner" - Your Trusted Online Medical Store
         <br />
@@ -86,7 +79,7 @@ function Homepage() {
         <input type="text" className="inline max-w-60 h-max outline-none" placeholder="Search" value={search} onChange={handleSearch} />
         <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="0.5" y="0.5" width="40" height="40" rx="20" fill="#282828" />
-          <path d="M27.25 27.25L23.8855 23.8795M25.75 19.375C25.75 21.0658 25.0784 22.6873 23.8828 23.8828C22.6873 25.0784 21.0658 25.75 19.375 25.75C17.6842 25.75 16.0627 25.0784 14.8672 23.8828C13.6716 22.6873 13 21.0658 13 19.375C13 17.6842 13.6716 16.0627 14.8672 14.8672C16.0627 13.6716 17.6842 13 19.375 13C21.0658 13 22.6873 13.6716 23.8828 14.8672C25.0784 16.0627 25.75 17.6842 25.75 19.375Z" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path d="M27.25 27.25L23.8855 23.8795M25.75 19.375C25.75 21.0658 25.0784 22.6873 23.8828 23.8828C22.6873 25.0784 21.0658 25.75 19.375 25.75C17.6842 25.75 16.0627 25.0784 14.8672 23.8828C13.6716 22.6873 13 21.0658 13 19.375C13 17.6842 13.6716 16.0627 14.8672 14.8672C16.0627 13.6716 17.6842 13 19.375 13C21.0658 13 22.6873 13.6716 23.8828 14.8672C25.0784 16.0627 25.75 17.6842 25.75 19.375Z" stroke="white" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </label>
       {
@@ -102,8 +95,8 @@ function Homepage() {
                 </p>
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="26" color="#000000" fill="none">
-                  <path d="M16.5 7.5L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                  <path d="M8 6.18791C8 6.18791 16.0479 5.50949 17.2692 6.73079C18.4906 7.95209 17.812 16 17.812 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M16.5 7.5L6 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M8 6.18791C8 6.18791 16.0479 5.50949 17.2692 6.73079C18.4906 7.95209 17.812 16 17.812 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
 
               </Link>
@@ -119,22 +112,12 @@ function Homepage() {
 
     <div className="featured lg:p-20 mt-11 p-2">
       <div className="flex justify-between items-center">
-        <span><p className='text-3xl font-bold py-2'>Featured Products</p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde repudiandae facilis laudantium!</span>
+        <span><p className='text-3xl font-bold py-2'>Featured Products</p>View our range of featured products!</span>
         <NavLink to="/productlist/all" className='rounded-full inline-block text-center content-center bg-black text-white text-lg w-60 h-14'>View All <img src="./src/assets/right.svg" alt=">" className='inline' /></NavLink>
       </div>
       <div className='flex gap-3 mt-9 overflow-scroll scroll-smooth no-scrollbar md:scroll-auto md:flex-wrap md:justify-center  md:max-h-[800px] md:overflow-hidden'>
 
-        {/* {
-
-          products && products.map((p) => (
-            <div className="card shrink-0">
-              <img src={`http://127.0.0.1:8000/${p.image}`} alt="" className='h-[20vh]  w-[25vw] md:h-[320px] md:w-[260px] object-cover rounded-lg' />
-              <p className="title pl-2">{p.name}</p>
-              <p className="price pl-2">₹{p.price}</p>
-            </div>
-          ))
-
-        } */}
+        
         {
           featuredProducts && featuredProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
@@ -179,7 +162,7 @@ function Homepage() {
     <div className="popular_products p-2 lg:p-20">
 
       <div className="flex justify-between items-center">
-        <span><p className='text-3xl font-bold py-2'>Most Popular Products</p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde repudiandae facilis laudantium!</span>
+        <span><p className='text-3xl font-bold py-2'>Most Popular Products</p>View our range of most popular products!</span>
         <NavLink to="/productlist/all" className='rounded-full inline-block text-center content-center bg-black text-white text-lg w-60 h-14'>View All <img src="./src/assets/right.svg" alt=">" className='inline' /></NavLink>
       </div>
 
@@ -196,17 +179,12 @@ function Homepage() {
 
     </div>
 
-    <div className="promo">
+    {/* <div className="promo">
 
       promo coming soon
-    </div>
-
+    </div> */}
 
     <Faq />
-
-
-
-
     <Footer />
   </>
 

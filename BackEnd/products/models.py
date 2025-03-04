@@ -1,6 +1,7 @@
 from django.db import models
 from PIL import Image
 from users.models import User
+from django.utils import timezone
 
 # Create your models here.
 class products(models.Model):
@@ -45,6 +46,7 @@ class products(models.Model):
         return self.name
 
 class review(models.Model):
+    date = models.DateTimeField(default=timezone.now)
     rating = models.IntegerField(null=True, blank=True)
     review = models.TextField(null=True , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
