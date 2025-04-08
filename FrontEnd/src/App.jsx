@@ -6,6 +6,7 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
+  ScrollRestoration,
 } from "react-router-dom";
 import Homepage from './components/Homepage'
 import Login from './components/Login';
@@ -19,46 +20,140 @@ import Profile from './components/Profile';
 import Register from './components/Register';
 import Thankyou from './components/Thankyou';
 import About from './components/About';
-
+import Faq from './components/Faq';
+import { Toaster } from 'react-hot-toast';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
-  
-
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-
-      <Route path="/" element={<Homepage />} />
-      <Route path="/About" element={<About />} />
-      <Route path="/Cart" element={<Cart />} />
-      <Route path="/Checkout/:id" element={<Checkout />} />
-      <Route path="/Contact" element={<Contact />} />
-      <Route path="/Login" element={<Login />} />
-      <Route path="/OrderHistory" element={<OrderHistory />} />
-      <Route path="/ProductDetails/:id" element={<ProductDetails />} />
-      <Route path="/Productlist/:id" element={<Productlist />} />
-      <Route path="/Profile" element={<Profile />} />
-      <Route path="/Register" element={<Register />} />
-      <Route path="/Thankyou" element={<Thankyou />} />
-      
-      
-      {/* errorElement={<Errorpage errorCode={404} />} */}
-        {/* <Route
-          path="/"
-          element={<MainContainer />}
-          errorElement={<Errorpage errorCode={400} />}
-          /> */}
-        
-        </>
-      
+      <Route 
+        path="/" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Homepage />
+          </>
+        } 
+        errorElement={<ErrorBoundary />}
+      />
+      <Route 
+        path="/About" 
+        element={
+          <>
+            <ScrollRestoration />
+            <About />
+          </>
+        }
+      />
+      <Route 
+        path="/Cart" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Cart />
+          </>
+        }
+      />
+      <Route 
+        path="/Checkout/:id" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Checkout />
+          </>
+        }
+      />
+      <Route 
+        path="/Contact" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Contact />
+          </>
+        }
+      />
+      <Route 
+        path="/Faq" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Faq />
+          </>
+        }
+      />
+      <Route 
+        path="/Login" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Login />
+          </>
+        }
+      />
+      <Route 
+        path="/OrderHistory" 
+        element={
+          <>
+            <ScrollRestoration />
+            <OrderHistory />
+          </>
+        }
+      />
+      <Route 
+        path="/ProductDetails/:id" 
+        element={
+          <>
+            <ScrollRestoration />
+            <ProductDetails />
+          </>
+        }
+      />
+      <Route 
+        path="/Productlist/:id" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Productlist />
+          </>
+        }
+      />
+      <Route 
+        path="/Profile" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Profile />
+          </>
+        }
+      />
+      <Route 
+        path="/Register" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Register />
+          </>
+        }
+      />
+      <Route 
+        path="/Thankyou" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Thankyou />
+          </>
+        }
+      />
+      </>
     )
   );
 
   return (
     <>
-      <RouterProvider router={router} />  
-    
+      <Toaster />
+      <RouterProvider router={router} />
     </>
   )
 }

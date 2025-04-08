@@ -1,6 +1,24 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom';
+import { showLoginRequired, showSuccess, showError } from '../utils/notification.jsx';
+
 const ProductCard = ({ product }) => {
+
+  const addToCart = async () => {
+    const token = localStorage.getItem('accessToken');
+    
+    if (!token) {
+      showLoginRequired();
+      return;
+    }
+    
+    try {
+      // Your cart API call
+      showSuccess('Product added to cart');
+    } catch (error) {
+      showError('Failed to add product to cart');
+    }
+  };
 
   return <>
     <div className='gap-3 my-3 flex justify-center flex-wrap '>

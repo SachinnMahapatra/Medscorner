@@ -3,6 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 import axios from 'axios'
 import Footer from './Footer';
+import { motion } from 'framer-motion';
+import { ChevronLeft, ShoppingCart, ShoppingBag, Star, Truck, Shield, Clock, AlertCircle, Calendar, Pill, List, User, ChevronRight, Package, Check, X } from 'lucide-react';
+import { showSuccess, showError, showLoginRequired } from '../utils/notification.jsx';
 // import { useHistory } from "react-router-dom";
 
 
@@ -39,6 +42,7 @@ const ProductDetails = () => {
   const [active, setActive] = useState(1)
   const [username, setUsername] = useState(null)
   const [isLoggedIn, setLoggedIn] = useState(false)
+  const [activeTab, setActiveTab] = useState('description');
 
   const checkLoggedInUser = async () => {
     // const navigate = useNavigate()
@@ -86,6 +90,7 @@ const ProductDetails = () => {
       }
     } catch (error) {
       console.log(error.message)
+      showError("Failed to fetch cart data");
     }
   }
 
@@ -103,6 +108,7 @@ const ProductDetails = () => {
         setProduct(response.data);
       } catch (error) {
         console.log(error.message)
+        showError("Failed to load product details");
       }
 
       fetchCart();
@@ -120,6 +126,7 @@ const ProductDetails = () => {
         
       } catch (error) {
         console.log(error.message)
+        showError("Failed to load reviews");
       }
 
     };
@@ -190,7 +197,7 @@ const ProductDetails = () => {
   // cart
   const handleCart = async () => {
     if (!isLoggedIn) {
-      alert("Please Log in to Use Cart")
+      showLoginRequired();
       return
     }
     try {
@@ -204,6 +211,13 @@ const ProductDetails = () => {
         };
         const response = await axios.put("http://127.0.0.1:8000/api/cart/", { "item": id, "quantity": editQuantity }, config)
         fetchCart();
+        
+        // Show appropriate success message
+        const message = quantity ? 
+          (quantity === editQuantity ? "Item already in cart" : "Cart updated successfully") 
+          : "Item added to cart";
+        
+        showSuccess(message);
       }
     } catch (error) {
       console.log(error.message)
@@ -220,10 +234,35 @@ const ProductDetails = () => {
     if (editQuantity > 1) setEditQuantity(editQuantity - 1);
   };
 
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.4 } }
+  };
 
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-
-
+  const RatingStars = ({ rating }) => {
+    return (
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            size={16}
+            className={`${star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return <>
 
@@ -235,199 +274,243 @@ const ProductDetails = () => {
         </svg>
         <p className='inline'> Go Back </p>
       </button>
-    <div className="lg:px-20 p-2  ">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+        >
+          <ChevronLeft size={16} className="mr-1" />
+          <span>Go Back</span>
+        </button>
+      </div>
 
-
-      <div className='mt-5 flex flex-col md:flex-row'>
-        <div className="photo flex gap-5 w-[100vw] justify-center md:w-fit md:justify-start flex-col-reverse md:flex-row">
-          <div className="select flex gap-2 md:flex-col justify-center md:justify-center">
-            {product.image &&
-              <img onClick={() => setActive(1)} onMouseOver={() => setActive(1)} src={`http://127.0.0.1:8000/${product.image}`} className='h-[100px]  w-[70px] md:h-[150px] md:w-[90px] object-cover rounded-md border' alt="nahi aaya" />
-            }
-            {product.image2 &&
-              <img onClick={() => setActive(2)} onMouseOver={() => setActive(2)} src={`http://127.0.0.1:8000/${product.image2}`} className='h-[100px] w-[70px] md:h-[150px] md:w-[90px] object-cover rounded-md border' alt="nahi aaya" />
-            }
-            {product.image3 &&
-              <img onClick={() => setActive(3)} onMouseOver={() => setActive(3)} src={`http://127.0.0.1:8000/${product.image3}`} className='h-[100px] w-[70px] md:h-[150px] md:w-[90px] object-cover rounded-md border' alt="nahi aaya" />
-            }
-          </div>
-
-          {
-            active &&
-              active == 1 ?
-              <img src={`http://127.0.0.1:8000/${product.image}`} className='self-center h-[400px] w-[90vw]   md:h-[467px] md:w-[300px] object-contain rounded-md border' alt="product image" />
-              : active == 2 ?
-                <img src={`http://127.0.0.1:8000/${product.image2}`} className='self-center h-[400px] w-[90vw]   md:h-[467px] md:w-[300px] object-contain rounded-md border' alt="product image" />
-                :
-                <img src={`http://127.0.0.1:8000/${product.image3}`} className='self-center h-[400px] w-[90vw]   md:h-[467px] md:w-[300px] object-contain rounded-md border' alt="product image" />
-          }
-        </div>
-
-
-        <div className="details md:ml-10">
-          <p className='text-3xl font-semibold break-words'>{product.name}</p>
-          <div className='flex items-center gap-3'>
-            <p className='text-3xl font-semibold inline'>₹ {product.price} </p>
-            <svg width="2" height="27" viewBox="0 0 2 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1.11719 0.75V26.25" stroke="black" />
-            </svg>
-
-
-            {ratingCount()}
-            <p>({product.total_rating} Rating)</p>
-
-          </div>
-          <hr className='my-4' />
-          <div className="flex flex-col-reverse md:flex-col">
-            <div>
-
-              {
-                product.description &&
-                <p>{product.description}</p>
-              }
-              {
-                product.manufacturer &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Manufacturer : </span> {product.manufacturer}</p>
-              }
-
-              {
-                product.compositions &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Compositions : </span>{product.compositions}</p>
-              }
-              {
-                product.expiry_date &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Expiry Date : </span>{product.expiry_date}</p>
-              }
-              {
-                product.dosage &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Dosage : </span>{product.dosage}</p>
-              }
-              {
-                product.uses &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Uses : </span>{product.uses}</p>
-              }
-              {
-                product.side_effects &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Side Effects : </span>{product.side_effects}</p>
-              }
-              {
-                product.prescription_required &&
-                <p><span className='text-lg md:text-2xl font-semibold'>Prescription Required: </span>{product.prescription_required ? "Yes!" : "No!"}</p>
-              }
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+          {/* Left column - Product images */}
+          <div className="col-span-1">
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={fadeIn}
+              className="mb-4"
+            >
+              <div className="border rounded-lg overflow-hidden bg-white flex items-center justify-center h-80">
+                <img 
+                  src={`http://127.0.0.1:8000/${active === 1 ? product.image : active === 2 ? product.image2 : product.image3}`}
+                  alt={product.name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+            </motion.div>
+            
+            <div className="flex justify-center space-x-2">
+              {product.image && (
+                <button 
+                  onClick={() => setActive(1)}
+                  className={`p-1 rounded-md border ${active === 1 ? 'border-blue-500' : 'border-gray-200'}`}
+                >
+                  <img 
+                    src={`http://127.0.0.1:8000/${product.image}`}
+                    alt={`${product.name} thumbnail 1`}
+                    className="h-16 w-16 object-contain"
+                  />
+                </button>
+              )}
+              {product.image2 && (
+                <button 
+                  onClick={() => setActive(2)}
+                  className={`p-1 rounded-md border ${active === 2 ? 'border-blue-500' : 'border-gray-200'}`}
+                >
+                  <img 
+                    src={`http://127.0.0.1:8000/${product.image2}`}
+                    alt={`${product.name} thumbnail 2`}
+                    className="h-16 w-16 object-contain"
+                  />
+                </button>
+              )}
+              {product.image3 && (
+                <button 
+                  onClick={() => setActive(3)}
+                  className={`p-1 rounded-md border ${active === 3 ? 'border-blue-500' : 'border-gray-200'}`}
+                >
+                  <img 
+                    src={`http://127.0.0.1:8000/${product.image3}`}
+                    alt={`${product.name} thumbnail 3`}
+                    className="h-16 w-16 object-contain"
+                  />
+                </button>
+              )}
             </div>
-            <div>
-              <div className="max-w-sm p-4 ">
-                {/* Quantity Selector */}
-                <div className="flex items-center justify-center space-x-4 mb-4">
+          </div>
+
+          {/* Middle column - Product info */}
+          <div className="col-span-1">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
+            
+            <div className="flex items-center mb-4">
+              <RatingStars rating={product.rating} />
+              <span className="ml-2 text-sm text-gray-500">
+                ({product.total_rating || 0} Rating{product.total_rating !== 1 ? 's' : ''})
+              </span>
+            </div>
+            
+            <p className="text-2xl font-medium text-gray-900 mb-4">₹ {product.price}</p>
+            
+            {product.description && (
+              <p className="text-gray-600 mb-6">{product.description}</p>
+            )}
+            
+            <div className="space-y-3 mb-6">
+              {product.manufacturer && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Manufacturer:</span>
+                  <span className="text-gray-900">{product.manufacturer}</span>
+                </div>
+              )}
+              
+              {product.compositions && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Compositions:</span>
+                  <span className="text-gray-900">{product.compositions}</span>
+                </div>
+              )}
+              
+              {product.expiry_date && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Expiry Date:</span>
+                  <span className="text-gray-900">{product.expiry_date}</span>
+                </div>
+              )}
+              
+              {product.dosage && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Dosage:</span>
+                  <span className="text-gray-900">{product.dosage}</span>
+                </div>
+              )}
+              
+              {product.uses && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Uses:</span>
+                  <span className="text-gray-900">{product.uses}</span>
+                </div>
+              )}
+              
+              {product.side_effects && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Side Effects:</span>
+                  <span className="text-gray-900">{product.side_effects}</span>
+                </div>
+              )}
+              
+              {product.prescription_required !== undefined && (
+                <div className="flex">
+                  <span className="text-gray-600 w-32">Prescription:</span>
+                  <span className={product.prescription_required ? "text-red-600" : "text-green-600"}>
+                    {product.prescription_required ? "Required" : "Not Required"}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right column - Purchase options */}
+          <div className="col-span-1">
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <div className="flex items-center space-x-2 mb-4">
+                <Package size={18} className="text-green-600" />
+                <span className="text-green-600 font-medium">In Stock</span>
+              </div>
+
+              <div className="border-t border-gray-200 pt-4 mb-4">
+                <div className="flex items-center mb-4">
                   <button
                     onClick={handleDecrease}
-                    className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-full text-xl"
+                    className="h-8 w-8 rounded-md border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
                   >
                     -
                   </button>
-                  <span className="text-lg font-medium">{editQuantity}</span>
+                  <span className="mx-4 w-8 text-center">{editQuantity}</span>
                   <button
                     onClick={handleIncrease}
-                    className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-full text-xl"
+                    className="h-8 w-8 rounded-md border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
                   >
                     +
                   </button>
-                  {
-                    quantity ?
-                      quantity == editQuantity ?
-                        <button onClick={handleCart} className="w-full max-w-[231px]  bg-black text-white py-3 rounded-lg text-center font-medium">
-                          In Your Cart
-                        </button>
-                        :
-                        <button onClick={handleCart} className="w-full max-w-[231px]  bg-black text-white py-3 rounded-lg text-center font-medium">
-                          Edit Cart
-                        </button>
-                      :
-                      <button onClick={handleCart} className="w-full max-w-[231px]  bg-black text-white py-3 rounded-lg text-center font-medium">
-                        Add To Cart
-                      </button>
+                </div>
 
+                <button
+                  onClick={handleCart}
+                  className={`w-full py-3 px-4 rounded-md font-medium text-white mb-3 flex items-center justify-center ${
+                    quantity ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  <ShoppingCart size={18} className="mr-2" />
+                  {quantity ? 
+                    quantity === editQuantity ? "In Your Cart" : "Update Cart" 
+                    : "Add To Cart"
                   }
-                  {/* <button className="w-full max-w-[231px]  bg-black text-white py-3 rounded-lg text-center font-medium">
-                    Add to Cart
-                  </button> */}
+                </button>
+                
+                <Link 
+                  to={isLoggedIn ? `/Checkout/${id}` : "#"}
+                  onClick={(e) => {
+                    if (!isLoggedIn) {
+                      e.preventDefault();
+                      showLoginRequired();
+                    }
+                  }}
+                  className="block w-full py-3 px-4 rounded-md bg-gray-800 hover:bg-gray-900 text-white font-medium text-center"
+                >
+                  Buy Now
+                </Link>
+              </div>
+
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center">
+                  <Truck size={16} className="text-gray-500 mr-2" />
+                  <span>Free worldwide shipping on all orders over $100</span>
                 </div>
-
-                {/* Buttons */}
-                <div className="flex flex-col space-y-4 mb-6">
-                  <Link to={`/Checkout/${id}`} className="w-full border border-black text-black py-3 rounded-lg text-center font-medium">
-                    Buy Now
-                  </Link>
+                <div className="flex items-center">
+                  <Clock size={16} className="text-gray-500 mr-2" />
+                  <span>Delivers in: 3-7 Working Days</span>
                 </div>
-
-                {/* Shipping Info */}
-                <div className="text-sm text-gray-600 space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.1168 14.5H14.2001C15.3918 14.5 16.3668 13.6 16.3668 12.5V2.5H6.61676C4.99176 2.5 3.5726 3.32999 2.83594 4.54999" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M2.2832 17.5C2.2832 19.16 3.73487 20.5 5.5332 20.5H6.61654C6.61654 19.4 7.59154 18.5 8.7832 18.5C9.97487 18.5 10.9499 19.4 10.9499 20.5H15.2832C15.2832 19.4 16.2582 18.5 17.4499 18.5C18.6415 18.5 19.6165 19.4 19.6165 20.5H20.6999C22.4982 20.5 23.9499 19.16 23.9499 17.5V14.5H20.6999C20.104 14.5 19.6165 14.05 19.6165 13.5V10.5C19.6165 9.95 20.104 9.5 20.6999 9.5H22.0973L20.2449 6.51001C19.8549 5.89001 19.1399 5.5 18.3599 5.5H16.3665V12.5C16.3665 13.6 15.3915 14.5 14.1999 14.5H13.1165" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M8.78385 22.5C9.98047 22.5 10.9505 21.6046 10.9505 20.5C10.9505 19.3954 9.98047 18.5 8.78385 18.5C7.58724 18.5 6.61719 19.3954 6.61719 20.5C6.61719 21.6046 7.58724 22.5 8.78385 22.5Z" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M17.4499 22.5C18.6465 22.5 19.6165 21.6046 19.6165 20.5C19.6165 19.3954 18.6465 18.5 17.4499 18.5C16.2533 18.5 15.2832 19.3954 15.2832 20.5C15.2832 21.6046 16.2533 22.5 17.4499 22.5Z" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M23.9505 12.5V14.5H20.7005C20.1047 14.5 19.6172 14.05 19.6172 13.5V10.5C19.6172 9.95 20.1047 9.5 20.7005 9.5H22.098L23.9505 12.5Z" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M2.2832 8.5H8.7832" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M2.2832 11.5H6.61654" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M2.2832 14.5H4.44987" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-
-                    <span>Free worldwide shipping on all orders over $100</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M7.375 10.5315L13.1167 13.8573L18.815 10.5532" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M13.1172 19.7506V13.8464" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M11.7736 7.31409L8.30696 9.24242C7.52696 9.67576 6.87695 10.7699 6.87695 11.6691V15.3416C6.87695 16.2408 7.51613 17.3349 8.30696 17.7683L11.7736 19.6966C12.5103 20.1083 13.7236 20.1083 14.4711 19.6966L17.9378 17.7683C18.7178 17.3349 19.3678 16.2408 19.3678 15.3416V11.6583C19.3678 10.7591 18.7286 9.66492 17.9378 9.23159L14.4711 7.30326C13.7236 6.89159 12.5103 6.89159 11.7736 7.31409Z" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M23.9505 16.75C23.9505 20.9425 20.5597 24.3333 16.3672 24.3333L17.5047 22.4375" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M2.2832 10.2501C2.2832 6.05758 5.67404 2.66675 9.86654 2.66675L8.72905 4.56258" stroke="#B9B9B9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-
-                    <span>
-                      Delivers in: 3-7 Working Days{" "}
-                      <a
-                        href="#"
-                        className="underline text-black hover:text-gray-800"
-                      >
-                        Shipping & Return
-                      </a>
-                    </span>
-                  </div>
+                <div className="flex items-center">
+                  <Check size={16} className="text-gray-500 mr-2" />
+                  <span>Secure payment</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-
-    {/* reviews */}
-    <div className="reviews py-14 bg-slate-200 lg:px-20 p-2 ">
-      <p className='text-3xl font-semibold mb-9'>Reviews</p>
-      {
-      !reviews && 
-      <p>No Reviws Yet</p>
-      }
-      {
-        reviews &&
-        reviews.map((review, index) => (
-          <div key={index} className="card border border-slate-600 shadow-sm p-2 rounded-xl my-3">
-            <div className='flex justify-between'>
-              <p className='font-semibold mb-2 text-xl'>{review.username} </p>
-              <div>{reviewRating(index)}</div>
+      {/* Reviews Section */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Reviews</h2>
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          {!reviews ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No Reviews Yet</p>
             </div>
-            <p>{review.review}</p>
-          </div>
-        ))
-      }
+          ) : (
+            <div className="space-y-6">
+              {reviews.map((review, index) => (
+                <div key={index} className="border-b border-gray-200 pb-6 last:border-0">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium">{review.username}</h3>
+                    <RatingStars rating={review.rating} />
+                  </div>
+                  <p className="text-gray-600">{review.review}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-
-
-    {/* similar products */}
-
 
     <Footer />
 

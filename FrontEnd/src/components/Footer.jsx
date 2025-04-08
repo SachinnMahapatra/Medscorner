@@ -1,157 +1,151 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Pill, AlertCircle, HeartPulse } from 'lucide-react'
 
 const Footer = () => {
-  return <>
-    <footer className='lg:p-20 mt-11 p-2 bg-stone-700 text-white'>
-      <div className="top mt-9">
-        <svg className='h-[55px] w-[144px] m-auto' width="55" height="21" viewBox="0 0 55 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g clipPath="url(#clip0_2_24927)">
-            <path d="M12.9603 0C10.828 0 8.78311 0.847035 7.27538 2.35477L2.35477 7.27538C0.847035 8.78311 0 10.828 0 12.9603C0 17.4005 3.5995 21 8.03971 21C10.172 21 12.2169 20.1529 13.7246 18.6452L17.1282 15.2416C17.1282 15.2415 17.1283 15.2417 17.1282 15.2416L27.0452 5.32462C27.7653 4.60454 28.7419 4.2 29.7603 4.2C31.4652 4.2 32.9106 5.31119 33.4118 6.84885L36.5415 3.71907C35.1138 1.48284 32.6102 0 29.7603 0C27.628 0 25.5831 0.847035 24.0754 2.35477L10.7548 15.6754C10.0347 16.3955 9.05807 16.8 8.03971 16.8C5.91909 16.8 4.2 15.0809 4.2 12.9603C4.2 11.9419 4.60454 10.9653 5.32462 10.2452L10.2452 5.32462C10.9653 4.60454 11.9419 4.2 12.9603 4.2C14.6653 4.2 16.1106 5.31124 16.6118 6.84895L19.7416 3.71915C18.3138 1.48288 15.8103 0 12.9603 0Z" fill="white" />
-            <path d="M27.5566 15.6754C26.8365 16.3955 25.8599 16.8 24.8415 16.8C23.1368 16.8 21.6915 15.6891 21.1902 14.1517L18.0605 17.2814C19.4884 19.5173 21.9918 21 24.8415 21C26.9738 21 29.0187 20.1529 30.5264 18.6452L43.847 5.32462C44.5671 4.60454 45.5437 4.2 46.5621 4.2C48.6827 4.2 50.4018 5.91909 50.4018 8.03971C50.4018 9.05807 49.9973 10.0347 49.2772 10.7548L44.3566 15.6754C43.6365 16.3955 42.6599 16.8 41.6415 16.8C39.9367 16.8 38.4913 15.6889 37.9901 14.1513L34.8604 17.2811C36.2882 19.5173 38.7917 21 41.6415 21C43.7738 21 45.8187 20.1529 47.3264 18.6452L52.247 13.7246C53.7547 12.2169 54.6018 10.172 54.6018 8.03971C54.6018 3.5995 51.0023 0 46.5621 0C44.4298 0 42.3849 0.847035 40.8772 2.35477L27.5566 15.6754Z" fill="white" />
-          </g>
-          <defs>
-            <clipPath id="clip0_2_24927">
-              <rect width="54.6" height="21" fill="white" />
-            </clipPath>
-          </defs>
-        </svg>
+  return (
+    <footer className='bg-gradient-to-b from-blue-50 to-blue-100 text-gray-700'>
+      {/* Newsletter Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-16">
+          <div className="max-w-3xl mx-auto text-center">
+            <HeartPulse size={48} className="mx-auto text-blue-600 mb-4" />
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Subscribe To Our Newsletter</h2>
+            <p className="text-gray-600 mb-8">Stay updated with the latest medical products, healthcare tips and exclusive discounts.</p>
+            
+            <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+              <input 
+                type="email" 
+                className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                placeholder="Enter your email address" 
+              />
+              <button className="bg-blue-600 text-white font-medium px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <h1 className="m-auto my-9 text-center text-5xl max-w-[780px] leading-tight">Subscribe To Your Newsletter to Stay Updated About Discounts</h1>
+        {/* Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Company Info */}
+          <div className="md:col-span-1">
+            <div className="flex items-center mb-4">
+              <Pill size={24} className="text-blue-600 mr-2" />
+              <span className="text-2xl font-bold text-blue-800">MedsCorner</span>
+            </div>
+            <p className="text-gray-600 mb-6">Your trusted partner for all healthcare needs, providing quality medications and expert advice since 2005.</p>
+            
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <MapPin size={18} className="text-blue-600 mr-2 mt-1 flex-shrink-0" />
+                <p className="text-gray-600">123 Healthcare Avenue, Medical District, City, Country - 123456</p>
+              </div>
+              <div className="flex items-center">
+                <Phone size={18} className="text-blue-600 mr-2 flex-shrink-0" />
+                <p className="text-gray-600">+911234567890</p>
+              </div>
+              <div className="flex items-center">
+                <Mail size={18} className="text-blue-600 mr-2 flex-shrink-0" />
+                <p className="text-gray-600">contact@medscorner.com</p>
+              </div>
+              <div className="flex items-center">
+                <Clock size={18} className="text-blue-600 mr-2 flex-shrink-0" />
+                <p className="text-gray-600">Mon-Sat: 8AM - 10PM</p>
+              </div>
+            </div>
+          </div>
 
-        <label className="flex items-center w-fit m-auto input input-bordered rounded-full  border-2 px-2 py-1 mt-7 bg-stone-800 mb-28">
-          <input type="email" className="inline max-w-72 w-[30vw] border-none bg-stone-800 " placeholder="Enter Your Email" />
-          <svg className='inline bg-black rounded-full p-3' width="50" height="50" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clipPath="url(#clip0_2_24472)">
-              <path fillRule="evenodd" clipRule="evenodd" d="M8.22013 19.5455C7.78079 19.1062 7.78079 18.3938 8.22013 17.9545L14.1746 12L8.22013 6.04549C7.78079 5.60616 7.78079 4.89384 8.22013 4.45451C8.65947 4.01517 9.37178 4.01517 9.81112 4.45451L16.5611 11.2045C17.0005 11.6438 17.0005 12.3562 16.5611 12.7955L9.81112 19.5455C9.37178 19.9848 8.65947 19.9848 8.22013 19.5455Z" fill="white" />
-            </g>
-            <defs>
-              <clipPath id="clip0_2_24472">
-                <rect width="24" height="24" fill="white" transform="translate(0.5)" />
-              </clipPath>
-            </defs>
-          </svg>
-
-
-        </label>
-      </div>
-
-
-
-
-
-      <div className="container mx-auto  px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8">
+          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-medium mb-4">PRODUCTS</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4 uppercase">Products</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#">Prescription Medications</a>
+                <Link to="/productlist/all" className="text-gray-600 hover:text-blue-600 transition-colors">Prescription Medications</Link>
               </li>
               <li>
-                <a href="#">Over-the-Counter Medications</a>
+                <Link to="/productlist/all" className="text-gray-600 hover:text-blue-600 transition-colors">Over-the-Counter Drugs</Link>
               </li>
               <li>
-                <a href="#">Vitamins & Supplements</a>
+                <Link to="/productlist/all" className="text-gray-600 hover:text-blue-600 transition-colors">Vitamins & Supplements</Link>
               </li>
               <li>
-                <a href="#">Health & Wellness Products</a>
+                <Link to="/productlist/all" className="text-gray-600 hover:text-blue-600 transition-colors">Healthcare Devices</Link>
               </li>
               <li>
-                <a href="#">Beauty & Personal Care</a>
+                <Link to="/productlist/all" className="text-gray-600 hover:text-blue-600 transition-colors">Personal Care</Link>
               </li>
             </ul>
           </div>
 
+          {/* Services */}
           <div>
-            <h3 className="text-lg font-medium mb-4">SERVICES</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4 uppercase">Services</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#">Pharmacy Services</a>
+                <Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">Online Consultations</Link>
               </li>
               <li>
-                <a href="#">Immunizations</a>
+                <Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">Medication Reminders</Link>
               </li>
               <li>
-                <a href="#">Health Clinics</a>
+                <Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">Health Checkups</Link>
               </li>
               <li>
-                <a href="#">Medication Therapy Management</a>
+                <Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">Prescription Refills</Link>
               </li>
               <li>
-                <a href="#">Transfer Prescriptions</a>
+                <Link to="/Contact" className="text-gray-600 hover:text-blue-600 transition-colors">Home Delivery</Link>
               </li>
             </ul>
           </div>
 
+          {/* Information */}
           <div>
-            <h3 className="text-lg font-medium mb-4">RESOURCES</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4 uppercase">Information</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#">Health Tips & Advice</a>
+                <Link to="/About" className="text-gray-600 hover:text-blue-600 transition-colors">About Us</Link>
               </li>
               <li>
-                <a href="#">Medication Information</a>
+                <Link to="/Contact" className="text-gray-600 hover:text-blue-600 transition-colors">Contact Us</Link>
               </li>
               <li>
-                <a href="#">Disease Management</a>
+                <Link to="/Faq" className="text-gray-600 hover:text-blue-600 transition-colors">FAQs</Link>
               </li>
               <li>
-                <a href="#">Healthy Living</a>
+                <Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">Privacy Policy</Link>
               </li>
               <li>
-                <a href="#">FAQs</a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-medium mb-4">ABOUT US</h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="#">Our Mission</a>
-              </li>
-              <li>
-                <a href="#">Our Team</a>
-              </li>
-              <li>
-                <a href="#">Careers</a>
-              </li>
-              <li>
-                <a href="#">Contact Us</a>
-              </li>
-              <li>
-                <a href="#">Store Locator</a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-medium mb-4">LEGAL</h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="#">Privacy Policy</a>
-              </li>
-              <li>
-                <a href="#">Terms of Service</a>
-              </li>
-              <li>
-                <a href="#">Return Policy</a>
-              </li>
-              <li>
-                <a href="#">Accessibility Statement</a>
+                <Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">Terms & Conditions</Link>
               </li>
             </ul>
           </div>
         </div>
-
-        <div className="text-center mt-12">
-          <p className="text-sm">
-            Copyright 2023 MedsCorner. All rights reserved.
+      </div>
+      
+      {/* Bottom Bar */}
+      <div className="border-t border-blue-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-600 text-sm mb-4 md:mb-0">
+            © {new Date().getFullYear()} MedsCorner. All rights reserved.
           </p>
+          
+          <div className="flex space-x-4">
+            <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+              <Facebook size={20} />
+            </a>
+            <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+              <Twitter size={20} />
+            </a>
+            <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+              <Instagram size={20} />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
-  </>
+  )
 }
 
 export default Footer

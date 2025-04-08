@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Footer from './Footer'
+import { showInfo, showWarning, showError, showSuccess } from '../utils/notification.jsx'
 
 const Checkout = () => {
   const { id } = useParams()
@@ -232,11 +233,11 @@ const Checkout = () => {
   const handleOrder = async (e) => {
     e.preventDefault;
     if (!isLoggedIn) {
-      alert("Please Login To Place Order !!!")
+      showWarning("Please Login To Place Order !!!")
       return
     }
     if (prescription_required && !prescription) {
-      alert("Please upload prescription")
+      showWarning("Please upload prescription")
       return
     }
 
@@ -247,7 +248,7 @@ const Checkout = () => {
         if (completeAddress && total && cartItems.length != 0) {
           if (prescription_required) {
             if (!prescription) {
-              alert("Please upload prescription before placing rder")
+              showWarning("Please upload prescription before placing rder")
               e.target.disabled = false
             }
 
@@ -323,7 +324,7 @@ const Checkout = () => {
   }
   const handlePrescription = (e) => {
     if (!e.target.files[0].name.match(/\.(jpg|jpeg|gif|png)$/i)) {
-      alert('not an image')
+      showWarning('not an image')
       e.target.value = null
       return
     }

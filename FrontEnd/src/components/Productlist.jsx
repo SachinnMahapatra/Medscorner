@@ -3,6 +3,8 @@ import axios from "axios";
 import ProductCard from "./ProductCard";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import NavBar from "./NavBar";
+import { motion } from "framer-motion";
+import { Search, ChevronLeft, Filter, SortAsc, SortDesc, Tag, DollarSign } from "lucide-react";
 
 const Productlist = () => {
   const id = useParams();
@@ -11,36 +13,29 @@ const Productlist = () => {
   const [categories, setCategories] = useState([]);
   const [priceRange, setPriceRange] = useState("");
   const [sortOrder, setSortOrder] = useState(""); // "asc" or "desc"
-  
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState(null);
-  const navigate=useNavigate()
-
+  const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
-    if (search.trim() == '') {
-      setSearchResult()
-      return
+    if (search.trim() === '') {
+      setSearchResult(null);
+      return;
     }
-    let arr = []
-    products.forEach((product) => {
-      let sr = search.trim().toLowerCase()
-      if (product.name.toLowerCase().includes(sr) || product.uses.toLowerCase().includes(sr) || product.compositions.toLowerCase().includes(sr) || product.description.toLowerCase().includes(sr)) {
-        // console.log(product)
-        arr.push(product)
-      }
-    })
-    setSearchResult(arr)
-    // console.log(arr)
-  }, [search])
-
-  // useEffect(() => {
-  //   console.log(searchResult)
-  // }, [searchResult])
+    const arr = products.filter(product => 
+      product.name.toLowerCase().includes(search.toLowerCase()) || 
+      product.uses.toLowerCase().includes(search.toLowerCase()) || 
+      product.compositions.toLowerCase().includes(search.toLowerCase()) || 
+      product.description.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResult(arr);
+  }, [search, products]);
 
   const handleSearch = (e) => {
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
   useEffect(() => {
     // Fetch products and categories from the API
@@ -63,6 +58,7 @@ const Productlist = () => {
 
   // Filter products by category
   const filterByCategory = (category) => {
+    setActiveCategory(category);
     if (category === "all") {
       setFilteredProducts(products);
     } else {
@@ -70,15 +66,22 @@ const Productlist = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     filterByCategory(id.id);
-  },[products])
+    if (id.id) {
+      setActiveCategory(id.id);
+    }
+  }, [products, id.id]);
 
   // Filter products by price range
   const filterByPriceRange = (range) => {
     setPriceRange(range);
     const [min, max] = range.split("-").map(Number);
-    setFilteredProducts(products.filter((product) => product.price >= min && product.price <= max));
+    setFilteredProducts(products.filter((product) => 
+      product.price >= min && 
+      product.price <= max && 
+      (activeCategory === "all" || product.category === activeCategory)
+    ));
   };
 
   // Sort products by price
@@ -90,123 +93,218 @@ const Productlist = () => {
     setFilteredProducts(sorted);
   };
 
-  return ( 
-  <>
-  <NavBar/>
-  <button onClick={() => navigate(-1)} className="ml-2">
-        <svg className='inline' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
-          <path d="M3.99982 11.9998L19.9998 11.9998" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M8.99963 17C8.99963 17 3.99968 13.3176 3.99966 12C3.99965 10.6824 8.99966 7 8.99966 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <p className='inline'> Go Back </p>
-      </button>
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
 
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
+  return (
+    <>
+      <NavBar />
       
-    <div className="flex flex-col lg:flex-row">
-      {/* Sidebar */}
-      <aside className="w-full lg:w-1/4 p-4 border-b lg:border-b-0 lg:border-r">
-        <div className="mb-6">
-          <h2 className="font-bold mb-2">Categories</h2>
-          <ul>
-            <li>
-              <button
-                onClick={() => filterByCategory("all")}
-                className="text-gray-700 hover:text-black"
-                >
-                All
-              </button>
-            </li>
-            {categories.map((category) => (
-              <li key={category}>
-                <button
-                  onClick={() => filterByCategory(category)}
-                  className="text-gray-700 hover:text-black"
-                >
-                  {category}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h2 className="font-bold mb-2">Price Range</h2>
-          <ul>
-            <li>
-              <button
-                onClick={() => filterByPriceRange("20-50")}
-                className={`text-gray-700 hover:text-black ${
-                  priceRange === "20-50" ? "font-bold" : ""
-                }`}
-              >
-                $20.00 - $50.00
-              </button>
-            </li>
-          </ul>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="w-full lg:w-3/4 p-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold">Our Collection Of Products</h1>
-          <div className="mt-4 sm:mt-0">
-            <select
-              value={sortOrder}
-              onChange={(e) => sortProducts(e.target.value)}
-              className="border rounded px-2 py-1"
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-blue-800 to-blue-600 text-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center mb-6">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="flex items-center text-white hover:text-blue-200 transition-colors"
             >
-              <option value="">Sort By</option>
-              <option value="asc">Price: Low to High</option>
-              <option value="desc">Price: High to Low</option>
-            </select>
+              <ChevronLeft size={20} className="mr-1" />
+              <span>Back</span>
+            </button>
+          </div>
+          <h1 className="text-3xl font-bold">{id.id === "all" ? "All Products" : id.id}</h1>
+          <p className="mt-2 text-blue-100">Find the best healthcare products for your needs</p>
+        </div>
+      </div>
+
+      {/* Search Section */}
+      <div className="bg-white shadow-md py-4">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+              <input 
+                type="text" 
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                placeholder="Search for products..." 
+                value={search} 
+                onChange={handleSearch} 
+              />
+            </div>
+            
+            {searchResult && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="search border border-gray-200 mt-2 rounded-xl p-2 overflow-y-auto bg-white shadow-lg max-h-[250px] z-10 relative"
+              >
+                {searchResult.map((product) => (
+                  <Link 
+                    to={`/ProductDetails/${product.id}`} 
+                    key={product.id} 
+                    className="flex justify-between items-center p-3 hover:bg-blue-50 transition-colors border-b border-gray-100 rounded-lg"
+                  >
+                    <p className="text-gray-800 font-medium">{product.name}</p>
+                    <ChevronLeft className="transform rotate-180 text-blue-600" size={18} />
+                  </Link>
+                ))}
+              </motion.div>
+            )}
           </div>
         </div>
-         {/* -------------Search------------ */}
-        <label className="flex justify-between items-center w-[90%] m-auto input input-bordered rounded-full border-gray-400 border-2 px-2 py-1 mt-7 bg-white mb-2">
-        <input type="text" className="inline max-w-60 h-max outline-none" placeholder="Search" value={search} onChange={handleSearch} />
-        <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0.5" y="0.5" width="40" height="40" rx="20" fill="#282828"/>
-<path d="M27.25 27.25L23.8855 23.8795M25.75 19.375C25.75 21.0658 25.0784 22.6873 23.8828 23.8828C22.6873 25.0784 21.0658 25.75 19.375 25.75C17.6842 25.75 16.0627 25.0784 14.8672 23.8828C13.6716 22.6873 13 21.0658 13 19.375C13 17.6842 13.6716 16.0627 14.8672 14.8672C16.0627 13.6716 17.6842 13 19.375 13C21.0658 13 22.6873 13.6716 23.8828 14.8672C25.0784 16.0627 25.75 17.6842 25.75 19.375Z" stroke="white" stroke-width="2" stroke-linecap="round"/>
-</svg>
-      </label>
-        {
-        searchResult &&
-        <div className='search border border-neutral-500 md:h-[250px] md:w-[550px] m-auto rounded-xl p-2 overflow-y-auto'>
-          {
-            searchResult &&
-            searchResult.map((product) => (
+      </div>
 
-              <Link to={`/ProductDetails/${product.id}`} key={product.id} className="flex justify-between border lg:h-fit max-h-[26px] overflow-hidden ">
-
-                <p>{product.name}
-                </p>
-
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="26" color="#000000" fill="none">
-                  <path d="M16.5 7.5L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                  <path d="M8 6.18791C8 6.18791 16.0479 5.50949 17.2692 6.73079C18.4906 7.95209 17.812 16 17.812 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-
-              </Link>
-
-))
-}
-          
-
-
+      <div className="container mx-auto px-4 py-8">
+        {/* Mobile Filter Toggle */}
+        <div className="md:hidden mb-4">
+          <button 
+            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+            className="flex items-center justify-center w-full py-2 bg-gray-100 rounded-lg border border-gray-300"
+          >
+            <Filter size={16} className="mr-2" />
+            <span>{mobileFiltersOpen ? "Hide Filters" : "Show Filters"}</span>
+          </button>
         </div>
-      }
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product}/>
-          ))}
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Sidebar */}
+          <motion.aside 
+            className={`md:w-1/4 ${mobileFiltersOpen ? 'block' : 'hidden'} md:block bg-white rounded-xl shadow-md p-6 h-fit`}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="mb-8">
+              <h2 className="font-bold text-lg mb-4 flex items-center">
+                <Tag size={18} className="mr-2 text-blue-600" />
+                Categories
+              </h2>
+              <ul className="space-y-2">
+                <li>
+                  <button
+                    onClick={() => filterByCategory("all")}
+                    className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
+                      activeCategory === "all" 
+                        ? "bg-blue-100 text-blue-800 font-medium" 
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    All Products
+                  </button>
+                </li>
+                {categories.map((category) => (
+                  <li key={category}>
+                    <button
+                      onClick={() => filterByCategory(category)}
+                      className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
+                        activeCategory === category 
+                          ? "bg-blue-100 text-blue-800 font-medium" 
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="font-bold text-lg mb-4 flex items-center">
+                <DollarSign size={18} className="mr-2 text-blue-600" />
+                Price Range
+              </h2>
+              <ul className="space-y-2">
+                {["0-20", "20-50", "50-100", "100-200", "200-500"].map((range) => (
+                  <li key={range}>
+                    <button
+                      onClick={() => filterByPriceRange(range)}
+                      className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
+                        priceRange === range 
+                          ? "bg-blue-100 text-blue-800 font-medium" 
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      ${range.split("-")[0]} - ${range.split("-")[1]}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.aside>
+
+          {/* Main Content */}
+          <main className="md:w-3/4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
+              <h2 className="text-2xl font-bold mb-4 sm:mb-0">
+                {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+              </h2>
+              <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 p-1">
+                <span className="text-gray-600 text-sm mr-2 pl-2">Sort by:</span>
+                <button
+                  onClick={() => sortProducts("asc")}
+                  className={`flex items-center px-3 py-1 rounded ${
+                    sortOrder === "asc" ? "bg-blue-100 text-blue-800" : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <SortAsc size={16} className="mr-1" />
+                  Price: Low to High
+                </button>
+                <button
+                  onClick={() => sortProducts("desc")}
+                  className={`flex items-center px-3 py-1 rounded ml-1 ${
+                    sortOrder === "desc" ? "bg-blue-100 text-blue-800" : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <SortDesc size={16} className="mr-1" />
+                  Price: High to Low
+                </button>
+              </div>
+            </div>
+
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <motion.div key={product.id} variants={fadeIn}>
+                    <ProductCard product={product} />
+                  </motion.div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-16 text-gray-500">
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <p className="text-xl mb-2">No products found</p>
+                    <p>Try adjusting your filters or search terms</p>
+                  </motion.div>
+                </div>
+              )}
+            </motion.div>
+          </main>
         </div>
-      </main>
-    </div>
-      </>
-      );
+      </div>
+    </>
+  );
 };
 
 export default Productlist;
