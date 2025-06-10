@@ -6,6 +6,45 @@ import { useNavigate } from 'react-router-dom';
 import Details from '../items/details';
 import { FaUser, FaBoxOpen, FaSignOutAlt, FaTrash } from 'react-icons/fa';
 
+function RatingModal({ open, onClose, onSubmit, order }) {
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState('');
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-4">Rate Your Order</h2>
+        <div className="flex mb-4">
+          {[1,2,3,4,5].map(star => (
+            <button
+              key={star}
+              className={star <= rating ? 'text-yellow-400' : 'text-gray-300'}
+              onClick={() => setRating(star)}
+              type="button"
+            >★</button>
+          ))}
+        </div>
+        <textarea
+          className="w-full border rounded p-2 mb-4"
+          placeholder="Write a review (optional)"
+          value={review}
+          onChange={e => setReview(e.target.value)}
+        />
+        <div className="flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+          <button
+            onClick={() => onSubmit(rating, review)}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+            disabled={rating === 0}
+          >Submit</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('profile');
@@ -14,6 +53,8 @@ const ProfilePage = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [orders, setOrders] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const checkLoggedInUser = async () => {
@@ -99,6 +140,31 @@ const ProfilePage = () => {
     }
   };
 
+  const handleOpenRating = (order) => {
+    setSelectedOrder(order);
+    setRatingModalOpen(true);
+  };
+
+  const handleSubmitRating = async (rating, review) => {
+    const token = localStorage.getItem('accessToken');
+    await axios.put(
+      `http://127.0.0.1:8000/api/order/rating/${selectedOrder.id}`,
+      {
+        rating,
+        review,
+        user: userDetails.id,
+        product: selectedOrder.product,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setRatingModalOpen(false);
+    // Refresh orders list after rating submission
+    const response = await axios.get("http://127.0.0.1:8000/api/users/orders/", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setOrders(response.data);
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case 'profile':
@@ -149,6 +215,14 @@ const ProfilePage = () => {
                           className="max-w-full md:max-w-xs rounded-lg"
                         />
                       </div>
+                    )}
+                    {order.status === 'D' && (
+                      <button
+                        className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded"
+                        onClick={() => handleOpenRating(order)}
+                      >
+                        Rate Order
+                      </button>
                     )}
                   </div>
                 ))}
@@ -295,6 +369,12 @@ const ProfilePage = () => {
         </div>
       </div>
       <Footer />
+      <RatingModal
+        open={ratingModalOpen}
+        onClose={() => setRatingModalOpen(false)}
+        onSubmit={handleSubmitRating}
+        order={selectedOrder}
+      />
     </>
   );
 };
