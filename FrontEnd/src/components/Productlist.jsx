@@ -4,7 +4,7 @@ import ProductCard from "./ProductCard";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import NavBar from "./NavBar";
 import { motion } from "framer-motion";
-import { Search, ChevronLeft, Filter, SortAsc, SortDesc, Tag, DollarSign } from "lucide-react";
+import { Search, ChevronLeft, Filter, SortAsc, SortDesc, Tag, IndianRupee  } from "lucide-react";
 
 const Productlist = () => {
   const id = useParams();
@@ -224,7 +224,7 @@ const Productlist = () => {
 
             <div>
               <h2 className="font-bold text-lg mb-4 flex items-center">
-                <DollarSign size={18} className="mr-2 text-blue-600" />
+                <IndianRupee  size={18} className="mr-2 text-blue-600" />
                 Price Range
               </h2>
               <ul className="space-y-2">
@@ -238,7 +238,7 @@ const Productlist = () => {
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
-                      ${range.split("-")[0]} - ${range.split("-")[1]}
+                      ₹{range.split("-")[0]} - ₹{range.split("-")[1]}
                     </button>
                   </li>
                 ))}
