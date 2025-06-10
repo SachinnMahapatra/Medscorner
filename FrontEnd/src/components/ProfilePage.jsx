@@ -55,6 +55,7 @@ const ProfilePage = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [productsById, setProductsById] = useState({});
 
   useEffect(() => {
     const checkLoggedInUser = async () => {
@@ -93,10 +94,24 @@ const ProfilePage = () => {
               }
             };
             const response = await axios.get("http://127.0.0.1:8000/api/users/orders/", config);
-            setOrders(response.data);
+            const ordersData = response.data;
+            setOrders(ordersData);
+
+            // Collect unique product IDs and fetch details
+            const productIds = [...new Set(ordersData.map(order => order.product))];
+            const productRequests = productIds.map(id => axios.get(`http://127.0.0.1:8000/api/products/details/${id}`));
+            const productResponses = await Promise.all(productRequests);
+            const productsMap = {};
+            productResponses.forEach(res => {
+              if (res.data && res.data.id) {
+                productsMap[res.data.id] = res.data;
+              }
+            });
+            setProductsById(productsMap);
           }
         } catch (error) {
           setOrders(null);
+          console.error("Error fetching orders or product details:", error);
         }
       }
     };
@@ -179,53 +194,74 @@ const ProfilePage = () => {
               <div className="text-center text-gray-500">No orders found</div>
             ) : (
               <div className="space-y-4 md:space-y-6">
-                {orders.map((order) => (
-                  <div key={order.id} className="bg-white shadow-lg rounded-lg p-4 md:p-6">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg">{order.product?.name}</h3>
-                        <p className="text-gray-600">Order Date: {new Date(order.date).toLocaleDateString()}</p>
+                {orders.map((order) => {
+                  const product = productsById[order.product];
+                  return (
+                    <div key={order.id} className="bg-white shadow-lg rounded-lg p-4 md:p-6">
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
+                        <div className="flex items-center gap-4">
+                          {product?.image && (
+                            <img
+                              src={`http://127.0.0.1:8000/${product.image}`}
+                              alt={product?.name}
+                              className="w-16 h-16 object-contain rounded-lg border"
+                            />
+                          )}
+                          <h3 className="font-semibold text-lg">{product?.name || 'Product'}</h3>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <p className="text-gray-600">Order Date: {new Date(order.date).toLocaleDateString()}</p>
+                          <span className={`px-3 py-1 rounded-full text-sm self-start mt-2 ${
+                            order.status === 'D' ? 'bg-green-100 text-green-800' :
+                            order.status === 'OFD' ? 'bg-blue-100 text-blue-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {order.status === 'D' ? 'Delivered' :
+                             order.status === 'OFD' ? 'Out for Delivery' :
+                             'Pending'}
+                          </span>
+                        </div>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm self-start ${
-                        order.status === 'D' ? 'bg-green-100 text-green-800' :
-                        order.status === 'OFD' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {order.status === 'D' ? 'Delivered' :
-                         order.status === 'OFD' ? 'Out for Delivery' :
-                         'Pending'}
-                      </span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                          <p className="text-gray-600">Quantity: {order.quantity}</p>
+                          <p className="text-gray-600">Price: ₹{order.price}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Address: {order.address}</p>
+                          <p className="text-gray-600">Phone: {order.phone}</p>
+                        </div>
+                      </div>
+                      {order.prescription && (
+                        <div className="mt-4">
+                          <p className="text-gray-600 mb-2">Prescription:</p>
+                          <img 
+                            src={`http://127.0.0.1:8000${order.prescription}`} 
+                            alt="Prescription" 
+                            className="max-w-full md:max-w-xs rounded-lg"
+                          />
+                        </div>
+                      )}
+                      {order.status === 'D' && (
+                        order.review ? (
+                          <button
+                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+                            onClick={() => handleOpenRating(order)}
+                          >
+                            Edit Review
+                          </button>
+                        ) : (
+                          <button
+                            className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded"
+                            onClick={() => handleOpenRating(order)}
+                          >
+                            Rate Order
+                          </button>
+                        )
+                      )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-gray-600">Quantity: {order.quantity}</p>
-                        <p className="text-gray-600">Price: ₹{order.price}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Address: {order.address}</p>
-                        <p className="text-gray-600">Phone: {order.phone}</p>
-                      </div>
-                    </div>
-                    {order.prescription && (
-                      <div className="mt-4">
-                        <p className="text-gray-600 mb-2">Prescription:</p>
-                        <img 
-                          src={`http://127.0.0.1:8000${order.prescription}`} 
-                          alt="Prescription" 
-                          className="max-w-full md:max-w-xs rounded-lg"
-                        />
-                      </div>
-                    )}
-                    {order.status === 'D' && (
-                      <button
-                        className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded"
-                        onClick={() => handleOpenRating(order)}
-                      >
-                        Rate Order
-                      </button>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -358,12 +394,9 @@ const ProfilePage = () => {
                 </li>
               </ul>
             </div>
-
-            {/* Main Content */}
-            <div className="w-full lg:w-3/4 bg-white shadow-xl rounded-2xl p-6 flex flex-col gap-6">
-              <div className="border-b pb-4 mb-4">
-                {renderContent()}
-              </div>
+            {/* Main content */}
+            <div className="w-full lg:w-3/4">
+              {renderContent()}
             </div>
           </div>
         </div>
@@ -380,4 +413,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
