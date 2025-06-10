@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'products',
     'users',
     'orders',
+    'appointment',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
