@@ -310,6 +310,13 @@ function Homepage() {
             <Droplet className="text-white" size={24} />
             Blood Bank
           </Link>
+          <Link
+            to="/book-doctor"
+            className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl shadow-xl font-semibold text-lg hover:bg-green-700 transition-all duration-200"
+          >
+            <Stethoscope className="text-white" size={24} />
+            Book Doctor
+          </Link>
           <a
             href="tel:102"
             className="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl shadow-xl font-semibold text-lg hover:bg-orange-600 transition-all duration-200"
@@ -329,6 +336,13 @@ function Homepage() {
             >
               <Droplet className="text-white" size={22} />
               Blood Bank
+            </Link>
+            <Link
+              to="/book-doctor"
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-xl shadow-lg font-semibold text-base hover:bg-green-700 transition-all duration-200"
+            >
+              <Stethoscope className="text-white" size={22} />
+              Book Doctor
             </Link>
             <a
               href="tel:102"
