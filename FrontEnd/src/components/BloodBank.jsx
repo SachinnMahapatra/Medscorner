@@ -1,8 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import NavBar from './NavBar';
 import Footer from './Footer';
 import { Search, Phone, MapPin, Clock, Users, Heart, AlertCircle, CheckCircle, Filter } from 'lucide-react';
+import bloodBankData from '../assets/blood-bank-json.json';
+
+const BloodBankList = lazy(() => Promise.resolve({
+  default: ({ banks, selectedBloodType }) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {banks.map(bank => (
+        <motion.div
+          key={bank.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl shadow-xl p-6 flex flex-col justify-between border border-gray-100 hover:shadow-2xl transition-shadow min-h-[340px]"
+        >
+          <div>
+            <h3 className="text-xl font-bold text-red-700 mb-1 flex items-center gap-2">
+              <span>{bank.name}</span>
+              {bank.bloodComponentAvailable && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-semibold">Components</span>}
+              {bank.apheresis && <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-semibold">Apheresis</span>}
+            </h3>
+            <div className="text-gray-600 text-sm mb-2 flex items-center gap-2">
+              <MapPin className="inline mr-1 text-red-400" size={16} />
+              <span>{bank.address}, {bank.city}, {bank.state} {bank.pincode && `- ${bank.pincode}`}</span>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {bank.availableBloodGroups.map(group => (
+                <span
+                  key={group}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${group === selectedBloodType ? 'bg-red-600 text-white border-red-600' : 'bg-red-50 text-red-700 border-red-200'}`}
+                >
+                  {group}
+                </span>
+              ))}
+            </div>
+            <div className="flex flex-col gap-1 text-gray-700 text-sm mb-2">
+              {bank.phone && <span><Phone className="inline mr-1 text-blue-400" size={15} /> {bank.phone}</span>}
+              {bank.mobile && <span><Phone className="inline mr-1 text-blue-400" size={15} /> {bank.mobile}</span>}
+              {bank.helpline && <span><Phone className="inline mr-1 text-blue-400" size={15} /> Helpline: {bank.helpline}</span>}
+              {bank.serviceTime && <span><Clock className="inline mr-1 text-green-400" size={15} /> {bank.serviceTime}</span>}
+            </div>
+          </div>
+          <div className="flex gap-2 mt-4">
+            <a
+              href={`tel:${bank.phone || bank.mobile}`}
+              className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-center font-semibold shadow"
+            >
+              Call Now
+            </a>
+            {bank.latitude && bank.longitude && (
+              <a
+                href={`https://www.google.com/maps?q=${bank.latitude},${bank.longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors text-center font-semibold shadow"
+              >
+                Directions
+              </a>
+            )}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  )
+}));
 
 function BloodBank() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,262 +73,173 @@ function BloodBank() {
   const [bloodBanks, setBloodBanks] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch and parse the CSV data
-    fetch('/src/assets/blood-banks.csv')
-      .then(response => response.text())
-      .then(data => {
-        const rows = data.split('\n').slice(1); // Skip header row
-        const parsedData = rows.map(row => {
-          const columns = row.split(',');
+    const loadData = async () => {
+      try {
+        if (!bloodBankData || !Array.isArray(bloodBankData)) {
+          throw new Error('Invalid blood bank data format');
+        }
+        const parsedData = bloodBankData.map(bank => {
+          if (!bank) return null;
           return {
-            id: columns[0],
-            name: columns[1],
-            state: columns[2],
-            district: columns[3],
-            city: columns[4],
-            address: columns[5],
-            pincode: columns[6],
-            phone: columns[7],
-            mobile: columns[8],
-            helpline: columns[9],
-            email: columns[11],
-            website: columns[12],
-            category: columns[17],
-            bloodComponentAvailable: columns[18] === 'YES',
-            apheresis: columns[19] === 'YES',
-            serviceTime: columns[20],
-            license: columns[21],
-            latitude: columns[24],
-            longitude: columns[25]
+            id: bank["Sr No"] || Math.random().toString(36).substr(2, 9),
+            name: bank["Blood Bank Name"] || 'Unknown Blood Bank',
+            state: bank["State"] || '',
+            district: bank["District"] || '',
+            city: bank["City"] || bank["District"] || '',
+            address: bank["Address"] || '',
+            pincode: bank["Pincode"] || '',
+            phone: bank["Contact No"] || '',
+            mobile: bank["Mobile"] || '',
+            helpline: bank["Helpline"] || '',
+            email: bank["Email"] || '',
+            website: bank["Website"] || '',
+            category: bank["Category"] || '',
+            bloodComponentAvailable: (bank["Blood Component Available"] || '').toUpperCase() === 'YES',
+            apheresis: (bank["Apheresis"] || '').toUpperCase() === 'YES',
+            serviceTime: bank["Service Time"] || '',
+            license: bank["License #"] || '',
+            latitude: bank["Latitude"] || '',
+            longitude: bank["Longitude"] || '',
+            availableBloodGroups: typeof bank["Available Blood Groups"] === 'string'
+              ? bank["Available Blood Groups"].split(',').map(g => g.trim()).filter(Boolean)
+              : []
           };
-        }).filter(bank => bank.name && bank.city); // Filter out invalid entries
-
+        }).filter(bank => bank && bank.name && (bank.city || bank.district));
         setBloodBanks(parsedData);
-        
-        // Extract unique cities
-        const uniqueCities = [...new Set(parsedData.map(bank => bank.city))].sort();
+        const uniqueCities = [...new Set(parsedData.map(bank => bank.city))].filter(Boolean).sort();
         setCities(uniqueCities);
-        
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error loading blood bank data:', error);
+      } catch (error) {
+        setError(error.message);
         setLoading(false);
-      });
+      }
+    };
+    loadData();
   }, []);
 
   const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
+  // Show all banks by default (no filter applied)
   const filteredBloodBanks = bloodBanks.filter(bank => {
-    const matchesSearch = bank.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         bank.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         bank.city.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery ||
+      bank.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      bank.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      bank.city.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCity = selectedCity === 'all' || bank.city === selectedCity;
-    return matchesSearch && matchesCity;
+    const matchesBloodType = selectedBloodType === 'all' ||
+      (bank.availableBloodGroups && bank.availableBloodGroups.includes(selectedBloodType));
+    return matchesSearch && matchesCity && matchesBloodType;
   });
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <NavBar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
+            <h2 className="mt-4 text-xl font-semibold text-gray-900">Error Loading Data</h2>
+            <p className="mt-2 text-gray-600">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <NavBar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-blue-50">
       <NavBar />
-      
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-red-600 to-red-700 text-white py-16">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Blood Bank Services</h1>
-            <p className="text-lg md:text-xl text-red-100 max-w-2xl mx-auto">
-              Find the nearest blood bank and check blood type availability. Your contribution can save lives.
+      <div className="container mx-auto px-2 md:px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-6xl mx-auto"
+        >
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-red-700 mb-2">Find Blood Banks</h1>
+              <p className="text-gray-600 text-base md:text-lg">Locate blood banks and check blood availability in your area</p>
+            </div>
+            <a
+              href="#donate"
+              className="inline-block bg-gradient-to-r from-red-600 to-pink-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-lg hover:scale-105 transition-transform"
+            >
+              Donate Blood
+            </a>
+          </div>
+          {/* Sticky Filter Bar */}
+          <div className="sticky top-2 z-10 bg-white/90 backdrop-blur rounded-xl shadow-md p-6 mb-10 flex flex-col md:flex-row md:items-center gap-4 border border-gray-100">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  placeholder="Search by name, address, or city..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-base"
+                />
+              </div>
+            </div>
+            <div className="flex gap-4 flex-col sm:flex-row">
+              <select
+                value={selectedBloodType}
+                onChange={(e) => setSelectedBloodType(e.target.value)}
+                className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-base"
+              >
+                <option value="all">All Blood Types</option>
+                {bloodTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 text-base"
+              >
+                <option value="all">All Cities</option>
+                {cities.map(city => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {/* Results Count */}
+          <div className="mb-6">
+            <p className="text-gray-700 text-lg font-medium">
+              Found {filteredBloodBanks.length} blood bank{filteredBloodBanks.length !== 1 ? 's' : ''}
             </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Search and Filter Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search blood banks..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-red-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
-            </div>
-
-            {/* Blood Type Filter */}
-            <select
-              className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
-              value={selectedBloodType}
-              onChange={(e) => setSelectedBloodType(e.target.value)}
-            >
-              <option value="all">All Blood Types</option>
-              {bloodTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-
-            {/* City Filter */}
-            <select
-              className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500"
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-            >
-              <option value="all">All Cities</option>
-              {cities.map(city => (
-                <option key={city} value={city}>{city}</option>
-              ))}
-            </select>
           </div>
-        </div>
-
-        {/* Loading State */}
-        {loading ? (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading blood bank data...</p>
-          </div>
-        ) : (
-          <>
-            {/* Blood Banks List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredBloodBanks.map((bank) => (
-                <motion.div
-                  key={bank.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden"
-                >
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{bank.name}</h3>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center text-gray-600">
-                        <MapPin size={18} className="mr-2 text-red-500" />
-                        <span>{bank.address}</span>
-                      </div>
-                      
-                      <div className="flex items-center text-gray-600">
-                        <Phone size={18} className="mr-2 text-red-500" />
-                        <span>{bank.phone || bank.mobile}</span>
-                      </div>
-                      
-                      <div className="flex items-center text-gray-600">
-                        <Clock size={18} className="mr-2 text-red-500" />
-                        <span>{bank.serviceTime || '24x7'}</span>
-                      </div>
-                      
-                      <div className="flex items-center text-gray-600">
-                        <Users size={18} className="mr-2 text-red-500" />
-                        <span>{bank.category}</span>
-                      </div>
-                    </div>
-
-                    {/* Blood Component Availability */}
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Services Available:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {bank.bloodComponentAvailable && (
-                          <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium">
-                            Blood Components
-                          </span>
-                        )}
-                        {bank.apheresis && (
-                          <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                            Apheresis
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="mt-6 flex gap-3">
-                      <a
-                        href={`tel:${bank.phone || bank.mobile}`}
-                        className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-center"
-                      >
-                        Call Now
-                      </a>
-                      {bank.latitude && bank.longitude && (
-                        <a
-                          href={`https://www.google.com/maps?q=${bank.latitude},${bank.longitude}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors text-center"
-                        >
-                          Get Directions
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Emergency Section */}
-            <div className="mt-12 bg-red-50 rounded-xl p-6">
-              <div className="flex items-start">
-                <AlertCircle size={24} className="text-red-600 mr-4 flex-shrink-0" />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Emergency Blood Need?</h3>
-                  <p className="text-gray-600 mb-4">
-                    If you need blood urgently, please call our emergency helpline. Our team will assist you in finding the nearest available blood bank.
-                  </p>
-                  <a
-                    href="tel:102"
-                    className="inline-flex items-center bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors"
-                  >
-                    <Phone size={20} className="mr-2" />
-                    Call Emergency Helpline (102)
-                  </a>
-                </div>
+          {/* Blood Bank List (Lazy Loaded) */}
+          <Suspense fallback={<div className="text-center py-8">Loading blood banks...</div>}>
+            {filteredBloodBanks.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No blood banks found matching your criteria</p>
               </div>
-            </div>
-
-            {/* Information Section */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <Heart size={24} className="text-red-600 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Why Donate Blood?</h3>
-                <p className="text-gray-600">
-                  Blood donation is a simple, safe process that can save up to three lives. Regular donations help maintain a stable blood supply.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <CheckCircle size={24} className="text-red-600 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Eligibility</h3>
-                <p className="text-gray-600">
-                  Most healthy adults can donate blood. You must be at least 18 years old, weigh at least 50 kg, and be in good health.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <Clock size={24} className="text-red-600 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Donation Process</h3>
-                <p className="text-gray-600">
-                  The entire process takes about an hour. After donation, you can resume normal activities after a short rest.
-                </p>
-              </div>
-            </div>
-          </>
-        )}
+            ) : (
+              <BloodBankList banks={filteredBloodBanks} selectedBloodType={selectedBloodType} />
+            )}
+          </Suspense>
+        </motion.div>
       </div>
-
       <Footer />
-    </>
+    </div>
   );
 }
 
