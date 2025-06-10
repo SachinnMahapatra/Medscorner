@@ -6,7 +6,7 @@ import axios from 'axios';
 import ProductCard from './ProductCard';
 import { NavLink, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, ArrowRight, Shield, Truck, Clock, Heart, Star, Package, PlusCircle, Pill, Stethoscope, Ambulance, Phone, Check, Baby, User, X, Activity } from 'lucide-react';
+import { Search, ArrowRight, Shield, Truck, Clock, Heart, Star, Package, PlusCircle, Pill, Stethoscope, Ambulance, Phone, Check, Baby, User, X, Activity, Droplet } from 'lucide-react';
 
 function Homepage() {
   const [products, setProducts] = useState([]);
@@ -82,87 +82,7 @@ function Homepage() {
     <NavBar />
       
       {/* Emergency Call Button with Dropdown - Fixed Position */}
-      <div className="emergency-container fixed right-5 bottom-5 z-50">
-        <button 
-          onClick={() => setIsEmergencyOpen(!isEmergencyOpen)}
-          onMouseEnter={() => setIsEmergencyOpen(true)}
-          className="flex items-center space-x-2 bg-red-600 text-white p-3 rounded-full shadow-lg hover:bg-red-700 transition-all duration-300"
-          title="Emergency Ambulance"
-        >
-          {isEmergencyOpen ? (
-            <X size={24} />
-          ) : (
-            <>
-              <Ambulance size={24} />
-              <span className="hidden md:inline font-semibold">Emergency</span>
-            </>
-          )}
-        </button>
-
-        {/* Emergency Options Dropdown */}
-        {isEmergencyOpen && (
-          <div 
-            className="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl overflow-hidden w-64 border border-red-100 animate-fade-in-up"
-            style={{animation: 'fadeIn 0.3s ease-out'}}
-          >
-            <div className="bg-red-600 text-white p-3">
-              <h3 className="font-bold">Emergency Services</h3>
-              <p className="text-sm text-red-100">Select service type</p>
-            </div>
-            
-            <div className="divide-y divide-gray-100">
-              <a 
-                href="tel:102" 
-                className="flex items-center p-3 hover:bg-red-50 transition-colors"
-              >
-                <Ambulance size={20} className="text-red-600 mr-3" />
-                <div>
-                  <p className="font-medium">General Ambulance</p>
-                  <p className="text-xs text-gray-500">For regular emergencies</p>
-                </div>
-              </a>
-              
-              <a 
-                href="tel:108" 
-                className="flex items-center p-3 hover:bg-red-50 transition-colors"
-              >
-                <Baby size={20} className="text-red-600 mr-3" />
-                <div>
-                  <p className="font-medium">Pediatric Ambulance</p>
-                  <p className="text-xs text-gray-500">For children emergencies</p>
-                </div>
-              </a>
-              
-              <a 
-                href="tel:108" 
-                className="flex items-center p-3 hover:bg-red-50 transition-colors"
-              >
-                <User size={20} className="text-red-600 mr-3" />
-                <div>
-                  <p className="font-medium">Maternity Ambulance</p>
-                  <p className="text-xs text-gray-500">For pregnancy emergencies</p>
-                </div>
-              </a>
-              
-              <a 
-                href="tel:108" 
-                className="flex items-center p-3 hover:bg-red-50 transition-colors"
-              >
-                <Activity size={20} className="text-red-600 mr-3" />
-                <div>
-                  <p className="font-medium">Critical Care Unit</p>
-                  <p className="text-xs text-gray-500">For critical emergencies</p>
-                </div>
-              </a>
-            </div>
-            
-            <div className="bg-red-50 p-2 text-center text-xs text-red-800">
-              All emergency calls are directed to medical services
-            </div>
-          </div>
-        )}
-      </div>
-      
+    
       {/* Hero Section - Medical Shop Theme */}
       <div 
         className="relative overflow-hidden min-h-[90vh]"
@@ -289,19 +209,19 @@ function Homepage() {
               </div>
             </motion.div>
             
-            {/* Right column - Blood Drop Icon and Medical Elements */}
+            {/* Right column - Heart Icon and Medical Elements */}
             <motion.div 
               initial={{opacity: 0, y: 30}} 
               animate={{opacity: 1, y: 0}} 
               transition={{duration: 0.8, delay: 0.2}}
               className="relative hidden lg:block"
             >
-              {/* Realistic Blood Drop Icon */}
+              {/* Glowing Heart Icon (replaces blood drop) */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <motion.div
                   animate={{
                     y: [0, -10, 0],
-                    scale: [1, 1.02, 1],
+                    scale: [1, 1.08, 1],
                     opacity: [0.9, 1, 0.9]
                   }}
                   transition={{
@@ -313,43 +233,23 @@ function Homepage() {
                 >
                   {/* Outer Glow Ring */}
                   <div className="absolute inset-0 w-40 h-40 bg-red-500/20 rounded-full blur-xl animate-pulse"></div>
-                  
-                  {/* Main Blood Drop */}
-                  <div className="relative w-32 h-32">
-                    {/* Drop Shape */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-red-600/90 to-red-700/90 rounded-full transform rotate-45">
-                      {/* Inner Glow */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-red-400/30 to-transparent rounded-full"></div>
-                      
-                      {/* Highlight */}
-                      <div className="absolute top-1/4 left-1/4 w-8 h-8 bg-white/20 rounded-full blur-sm"></div>
-                      
-                      {/* Core */}
-                      <div className="absolute inset-4 bg-gradient-to-b from-red-500/80 to-red-600/80 rounded-full">
-                        {/* Inner Core Glow */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-red-400/40 to-transparent rounded-full"></div>
-                        
-                        {/* Blood Icon */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <motion.div
-                            animate={{
-                              scale: [1, 1.1, 1],
-                              opacity: [0.8, 1, 0.8]
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              ease: "easeInOut"
-                            }}
-                            className="text-4xl"
-                          >
-                            🩸
-                          </motion.div>
-                        </div>
-                      </div>
-                    </div>
+                  {/* Main Heart Icon */}
+                  <div className="relative w-32 h-32 flex items-center justify-center">
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.8, 1, 0.8]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="text-7xl text-red-500 drop-shadow-lg"
+                    >
+                      <Heart size={96} fill="#ef4444" className="text-red-500" />
+                    </motion.div>
                   </div>
-                  
                   {/* Floating Particles */}
                   <div className="absolute inset-0">
                     {[...Array(6)].map((_, i) => (
@@ -376,7 +276,6 @@ function Homepage() {
                   </div>
                 </motion.div>
               </div>
-
               {/* Medical Elements */}
               <motion.div 
                 initial={{opacity: 0, x: 20}}
@@ -386,7 +285,6 @@ function Homepage() {
               >
                 <Stethoscope size={40} className="text-blue-600" />
               </motion.div>
-
               <motion.div 
                 initial={{opacity: 0, x: -20}}
                 animate={{opacity: 1, x: 0}}
@@ -400,105 +298,49 @@ function Homepage() {
         </div>
       </div>
 
-      {/* Floating Blood Bank CTA Button */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
-        className="fixed top-6 right-6 md:top-12 md:right-16 lg:top-16 lg:right-20 z-50"
-      >
-        <Link 
-          to="/blood-bank"
-          className="group relative block"
-        >
-          {/* Outer Glow */}
-          <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl animate-pulse"></div>
-          
-          {/* Main Button Container */}
-          <div className="relative">
-            {/* Teardrop Shape */}
-            <div className="w-14 h-18 md:w-16 md:h-20 lg:w-20 lg:h-24 bg-gradient-to-b from-red-600 to-red-700 rounded-full transform rotate-45 relative overflow-hidden shadow-2xl">
-              {/* 3D Effect Layers */}
-              <div className="absolute inset-0 bg-gradient-to-b from-red-500/50 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-red-800/30 to-transparent"></div>
-              
-              {/* Inner Glow */}
-              <div className="absolute inset-0 bg-gradient-to-b from-red-400/40 to-transparent"></div>
-              
-              {/* Highlight */}
-              <div className="absolute top-1/4 left-1/4 w-6 h-6 md:w-8 md:h-8 bg-white/30 rounded-full blur-sm"></div>
-              
-              {/* White Stroke */}
-              <div className="absolute inset-0 border-2 border-white/40 rounded-full"></div>
-              
-              {/* Blood Drop Icon */}
-              <div className="absolute inset-0 flex items-center justify-center transform -rotate-45">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.9, 1, 0.9]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="text-2xl md:text-3xl lg:text-4xl drop-shadow-lg"
-                >
-                  🩸
-                </motion.div>
-              </div>
-            </div>
-            
-            {/* Floating Label */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5 }}
-              className="absolute -bottom-5 md:-bottom-6 lg:-bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
+      {/* Action Buttons - Responsive Design */}
+      {/* Desktop: bottom-right, stacked. Mobile: sticky bottom, side-by-side. */}
+      <div>
+        {/* Desktop (md and up): Stacked floating buttons bottom-right */}
+        <div className="hidden md:flex flex-col gap-4 fixed bottom-8 right-8 z-50">
+          <Link
+            to="/blood-bank"
+            className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl shadow-xl font-semibold text-lg hover:bg-red-700 transition-all duration-200"
+          >
+            <Droplet className="text-white" size={24} />
+            Blood Bank
+          </Link>
+          <a
+            href="tel:102"
+            className="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl shadow-xl font-semibold text-lg hover:bg-orange-600 transition-all duration-200"
+            title="Emergency Ambulance"
+          >
+            <Ambulance className="text-white" size={24} />
+            Emergency
+          </a>
+        </div>
+
+        {/* Mobile (sm and below): Side-by-side sticky bottom */}
+        <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-transparent">
+          <div className="flex gap-2 px-2 pb-2 pt-2 bg-white/90 backdrop-blur-sm">
+            <Link
+              to="/blood-bank"
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-600 text-white rounded-xl shadow-lg font-semibold text-base hover:bg-red-700 transition-all duration-200"
             >
-              <div className="bg-white/95 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1 rounded-full shadow-lg text-xs md:text-sm lg:text-base font-medium text-red-600">
-                Blood Bank
-              </div>
-            </motion.div>
+              <Droplet className="text-white" size={22} />
+              Blood Bank
+            </Link>
+            <a
+              href="tel:102"
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-orange-500 text-white rounded-xl shadow-lg font-semibold text-base hover:bg-orange-600 transition-all duration-200"
+              title="Emergency Ambulance"
+            >
+              <Ambulance className="text-white" size={22} />
+              Emergency
+            </a>
           </div>
-          
-          {/* Hover Effect */}
-          <motion.div
-            className="absolute inset-0 bg-red-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.2 }}
-          />
-          
-          {/* 3D Shadow Effect */}
-          <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-12 h-3 md:w-16 md:h-4 lg:w-20 lg:h-5 bg-red-900/20 blur-md rounded-full"></div>
-          
-          {/* Floating Particles */}
-          <div className="absolute inset-0">
-            {[...Array(4)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-1 h-1 bg-red-400/40 rounded-full"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  y: [0, -15, 0],
-                  opacity: [0, 0.5, 0],
-                  scale: [0, 1, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.3,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
-          </div>
-        </Link>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Trusted Features Section */}
       <div className="py-12 bg-white">
