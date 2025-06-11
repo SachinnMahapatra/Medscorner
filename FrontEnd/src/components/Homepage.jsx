@@ -311,7 +311,7 @@ function Homepage() {
             Blood Bank
           </Link>
           <Link
-            to="/book-doctor"
+            to="/appointment"
             className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl shadow-xl font-semibold text-lg hover:bg-green-700 transition-all duration-200"
           >
             <Stethoscope className="text-white" size={24} />
