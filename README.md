@@ -1,6 +1,6 @@
 # MedsCorner 🏥
 
-**MedsCorner** is an all-in-one health-tech platform designed to streamline healthcare access for users. Built as a college team project under Maulana Abul Kalam Azad University of Technology, it provides essential features such as:
+**MedsCorner** is an all-in-one health-tech platform designed to streamline healthcare access for users. Built as a college team project under Maulana Abul Kalam Azad University of Technology, it provides essential features such as :
 
 ## 🚀 Features
 
