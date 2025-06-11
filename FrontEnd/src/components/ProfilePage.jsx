@@ -95,7 +95,9 @@ const ProfilePage = () => {
             };
             const response = await axios.get("http://127.0.0.1:8000/api/users/orders/", config);
             const ordersData = response.data;
-            setOrders(ordersData);
+            // Sort orders by date in descending order (most recent first)
+            const sortedOrders = [...ordersData].sort((a, b) => new Date(b.date) - new Date(a.date));
+            setOrders(sortedOrders);
 
             // Collect unique product IDs and fetch details
             const productIds = [...new Set(ordersData.map(order => order.product))];
