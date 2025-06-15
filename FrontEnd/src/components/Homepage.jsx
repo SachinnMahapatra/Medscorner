@@ -4,11 +4,12 @@ import Footer from './Footer';
 import Faq from './Faq';
 import axios from 'axios';
 import ProductCard from './ProductCard';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, ArrowRight, Shield, Truck, Clock, Heart, Star, Package, PlusCircle, Pill, Stethoscope, Ambulance, Phone, Check, Baby, User, X, Activity, Droplet } from 'lucide-react';
 
 function Homepage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -81,7 +82,16 @@ function Homepage() {
     <>
     <NavBar />
       
-      {/* Emergency Call Button with Dropdown - Fixed Position */}
+      {/* Emergency Call Button - Fixed Position */}
+      {/* <div className="fixed bottom-6 right-6 z-50">
+        <button
+          onClick={() => navigate('/emergency')}
+          className="bg-red-600 hover:bg-red-700 text-white rounded-full p-4 shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center space-x-2"
+        >
+          <Ambulance className="w-6 h-6" />
+          <span className="font-semibold">Emergency</span>
+        </button>
+      </div> */}
     
       {/* Hero Section - Medical Shop Theme */}
       <div 
@@ -317,14 +327,14 @@ function Homepage() {
             <Stethoscope className="text-white" size={24} />
             Book Doctor
           </Link>
-          <a
-            href="tel:102"
+          <Link
+            to="/emergency"
             className="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl shadow-xl font-semibold text-lg hover:bg-orange-600 transition-all duration-200"
             title="Emergency Ambulance"
           >
             <Ambulance className="text-white" size={24} />
             Emergency
-          </a>
+          </Link>
         </div>
 
         {/* Mobile (sm and below): Side-by-side sticky bottom */}
@@ -344,14 +354,14 @@ function Homepage() {
               <Stethoscope className="text-white" size={22} />
               Book Doctor
             </Link>
-            <a
-              href="tel:102"
+            <Link
+              to="/emergency"
               className="flex-1 flex items-center justify-center gap-2 py-3 bg-orange-500 text-white rounded-xl shadow-lg font-semibold text-base hover:bg-orange-600 transition-all duration-200"
               title="Emergency Ambulance"
             >
               <Ambulance className="text-white" size={22} />
               Emergency
-            </a>
+            </Link>
           </div>
         </div>
       </div>
