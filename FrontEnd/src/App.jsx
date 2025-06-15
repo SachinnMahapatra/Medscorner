@@ -21,6 +21,7 @@ import Register from './components/Register';
 import Thankyou from './components/Thankyou';
 import About from './components/About';
 import Faq from './components/Faq';
+import Appointment from './components/appointment';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import BloodBank from './components/BloodBank';
@@ -145,6 +146,15 @@ function App() {
           <>
             <ScrollRestoration />
             <Thankyou />
+          </>
+        }
+      />
+      <Route 
+        path="/appointment" 
+        element={
+          <>
+            <ScrollRestoration />
+            <Appointment/>
           </>
         }
       />
