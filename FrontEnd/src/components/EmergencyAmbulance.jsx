@@ -1,5 +1,7 @@
 import React from 'react';
 import { Phone } from 'lucide-react';
+import NaVBar from './NavBar'
+import Footer from './Footer'
 
 const EmergencyAmbulance = () => {
   const ambulanceServices = [
@@ -7,7 +9,7 @@ const EmergencyAmbulance = () => {
       id: 1,
       type: "Basic Life Support (BLS)",
       description: "Equipped with basic medical equipment and trained paramedics for non-critical patients",
-      image: "https://images.pexels.com/photos/263339/pexels-photo-263339.jpeg",
+      image: "../src/assets/bls.jpg",
       contact: "108",
       features: [
         "Basic medical equipment",
@@ -20,7 +22,7 @@ const EmergencyAmbulance = () => {
       id: 2,
       type: "Advanced Life Support (ALS)",
       description: "Fully equipped with advanced medical equipment and trained medical staff for critical patients",
-      image: "https://images.pexels.com/photos/263339/pexels-photo-263339.jpeg",
+      image: "../src/assets/Als.jpg",
       contact: "102",
       features: [
         "Advanced medical equipment",
@@ -33,7 +35,7 @@ const EmergencyAmbulance = () => {
       id: 3,
       type: "Neonatal Ambulance",
       description: "Specially designed for newborn babies and infants with specialized equipment",
-      image: "https://images.pexels.com/photos/263339/pexels-photo-263339.jpeg",
+      image: "../src/assets/Neonatal.jpg",
       contact: "104",
       features: [
         "Neonatal incubator",
@@ -46,7 +48,7 @@ const EmergencyAmbulance = () => {
       id: 4,
       type: "Air Ambulance",
       description: "Helicopter-based emergency medical service for critical and remote area cases",
-      image: "https://images.pexels.com/photos/263339/pexels-photo-263339.jpeg",
+      image: "../src/assets/Air.jpg",
       contact: "1800-XXX-XXXX",
       features: [
         "Rapid response",
@@ -58,6 +60,8 @@ const EmergencyAmbulance = () => {
   ];
 
   return (
+    <>
+    <NaVBar/>
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
@@ -118,6 +122,8 @@ const EmergencyAmbulance = () => {
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 
