@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Appointment = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [doctors, setDoctors] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,53 +21,75 @@ const Appointment = () => {
   const [config, setConfig] = useState(null);
   const [selectedSpecialization, setSelectedSpecialization] = useState("all");
 
+
+    useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/doctors/');
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch doctors');
+        }
+        setDoctors(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    fetchProducts();
+
+    const filteredDoctors = selectedSpecialization === "all" 
+    ? doctors 
+    : doctors.filter(doctor => doctor.specialization === selectedSpecialization);
+   
+  }, []);
   // Sample doctor data
-  const doctors = [
-    {
-      id: 1,
-      name: "Dr. Sarah Johnson",
-      specialization: "Cardiologist",
-      photo: "https://randomuser.me/api/portraits/women/65.jpg",
-      availableDates: ["Mon, June 5 - 10:00 AM", "Wed, June 7 - 2:30 PM", "Fri, June 9 - 4:00 PM"],
-      fees: "₹120",
-      experience: "15 years",
-      rating: 4.8,
-      reviews: 128,
-    },
-    {
-      id: 2,
-      name: "Dr. Michael Chen",
-      specialization: "Neurologist",
-      photo: "https://randomuser.me/api/portraits/men/32.jpg",
-      availableDates: ["Tue, June 6 - 9:00 AM", "Thu, June 8 - 11:30 AM", "Sat, June 10 - 3:00 PM"],
-      fees: "₹150",
-      experience: "12 years",
-      rating: 4.9,
-      reviews: 156,
-    },
-    {
-      id: 3,
-      name: "Dr. Priya Patel",
-      specialization: "Dermatologist",
-      photo: "https://randomuser.me/api/portraits/women/44.jpg",
-      availableDates: ["Mon, June 5 - 1:00 PM", "Wed, June 7 - 10:00 AM", "Fri, June 9 - 11:00 AM"],
-      fees: "₹90",
-      experience: "8 years",
-      rating: 4.7,
-      reviews: 98,
-    },
-    {
-      id: 4,
-      name: "Dr. Robert Williams",
-      specialization: "Pediatrician",
-      photo: "https://randomuser.me/api/portraits/men/75.jpg",
-      availableDates: ["Tue, June 6 - 2:00 PM", "Thu, June 8 - 4:30 PM", "Sat, June 10 - 9:30 AM"],
-      fees: "₹110",
-      experience: "10 years",
-      rating: 4.6,
-      reviews: 112,
-    },
-  ];
+  // const doctors = [
+  //   {
+  //     id: 1,
+  //     name: "Dr. Sarah Johnson",
+  //     specialization: "Cardiologist",
+  //     photo: "https://randomuser.me/api/portraits/women/65.jpg",
+  //     availableDates: ["Mon, June 5 - 10:00 AM", "Wed, June 7 - 2:30 PM", "Fri, June 9 - 4:00 PM"],
+  //     fees: "₹120",
+  //     experience: "15 years",
+  //     rating: 4.8,
+  //     reviews: 128,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Dr. Michael Chen",
+  //     specialization: "Neurologist",
+  //     photo: "https://randomuser.me/api/portraits/men/32.jpg",
+  //     availableDates: ["Tue, June 6 - 9:00 AM", "Thu, June 8 - 11:30 AM", "Sat, June 10 - 3:00 PM"],
+  //     fees: "₹150",
+  //     experience: "12 years",
+  //     rating: 4.9,
+  //     reviews: 156,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Dr. Priya Patel",
+  //     specialization: "Dermatologist",
+  //     photo: "https://randomuser.me/api/portraits/women/44.jpg",
+  //     availableDates: ["Mon, June 5 - 1:00 PM", "Wed, June 7 - 10:00 AM", "Fri, June 9 - 11:00 AM"],
+  //     fees: "₹90",
+  //     experience: "8 years",
+  //     rating: 4.7,
+  //     reviews: 98,
+      
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Dr. Robert Williams",
+  //     specialization: "Pediatrician",
+  //     photo: "https://randomuser.me/api/portraits/men/75.jpg",
+  //     availableDates: ["Tue, June 6 - 2:00 PM", "Thu, June 8 - 4:30 PM", "Sat, June 10 - 9:30 AM"],
+  //     fees: "₹110",
+  //     experience: "10 years",
+  //     rating: 4.6,
+  //     reviews: 112,
+  //   },
+  // ];
 
   const specializations = ["all", ...new Set(doctors.map(doctor => doctor.specialization))];
 

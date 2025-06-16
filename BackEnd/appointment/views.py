@@ -5,6 +5,8 @@ from rest_framework import status
 from .models import *
 from .serializer import *
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 from users.models import User
 # Create your views here.
@@ -21,13 +23,29 @@ def bookAppointment(request):
     serializer = appointmentSerializer(data=data)
     
     if serializer.is_valid():
+        # email variables
+        subject="Email Verification"
         
-        # Save the order
-        serializer.save()
-        
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Load HTML email template
+        html_message = render_to_string('users/email_template.html')
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        sender = "apnasourav08@gmail.com"
+        receiver = [serializer.validated_data["email"]]
+             
+        # send email
+        send_mail(
+                subject,
+                '', # Empty message as we are sending HTML content
+                sender,
+                receiver,
+                fail_silently=True,
+                html_message=html_message,
+            )
+            
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

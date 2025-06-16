@@ -22,6 +22,7 @@ class Appointment(models.Model):
     contactNumber = models.CharField(max_length=13,blank=True, null=True)
     # date = models.DateTimeField(auto_now=True)
     email = models.CharField(blank=True, null=True,max_length=100)
+   
 
     
 
@@ -37,7 +38,8 @@ class Doctors(models.Model):
     availableDates = JSONField()
     fees = models.IntegerField(default=100)
     photo = models.ImageField(upload_to="uploads/doctorsPhoto/",null=True , blank=True)
-
+    experience = models.CharField(blank=True, null=True ,max_length=100)
+    rating = models.FloatField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.doctorName
