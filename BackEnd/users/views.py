@@ -11,6 +11,8 @@ from orders.serializers import orderSerializer
 import random
 from django.utils import timezone
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 
 
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
@@ -51,24 +53,21 @@ def generate_otp(request):
     if serializer.is_valid():
         # email variables
         subject="Email Verification"
-        message = f"""
-                Hey, 
-                    Welcome to MedsCroner ,
+        
+        # Load HTML email template
+        html_message = render_to_string('users/email_template.html', {'otp': otp})
 
-                here is your OTP {otp} for MedsCorner Verification
-                it expires in 5 minutes, 
-                                    
-                        """
         sender = "apnasourav08@gmail.com"
         receiver = [serializer.validated_data["email"]]
              
         # send email
         send_mail(
                 subject,
-                message,
+                '', # Empty message as we are sending HTML content
                 sender,
                 receiver,
                 fail_silently=True,
+                html_message=html_message,
             )
             
 

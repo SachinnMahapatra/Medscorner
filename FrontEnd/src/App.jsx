@@ -25,6 +25,7 @@ import Appointment from './components/appointment';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import BloodBank from './components/BloodBank';
+import EmergencyAmbulance from './components/EmergencyAmbulance';
 
 function App() {
   const router = createBrowserRouter(
@@ -163,6 +164,15 @@ function App() {
           <>
             <ScrollRestoration />
             <BloodBank />
+          </>
+        }
+      />
+      <Route 
+        path="/emergency" 
+        element={
+          <>
+            <ScrollRestoration />
+            <EmergencyAmbulance />
           </>
         }
       />
