@@ -23,6 +23,7 @@ function Homepage() {
           throw new Error('Failed to fetch products');
         }
         setProducts(response.data);
+        console.log("product fetched")
         setFeaturedProducts(response.data.slice(0, 4));
       } catch (error) {
         console.log(error.message);
@@ -41,7 +42,7 @@ function Homepage() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isEmergencyOpen]);
+  }, []);
 
   useEffect(() => {
     if (search.trim() === '') {
@@ -439,27 +440,11 @@ function Homepage() {
             viewport={{ once: true, amount: 0.1 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            {featuredProducts.map((product) => (
-              <motion.div key={product.id} variants={fadeIn} className="group">
-                <div className="bg-white p-4 rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md border border-gray-100">
-                  <div className="h-48 flex items-center justify-center mb-4 bg-blue-50 rounded-lg p-4">
-                    <img 
-                      src={`http://127.0.0.1:8000/${product.image}`}
-                      alt={product.name}
-                      className="max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <h3 className="font-medium text-gray-800 text-lg truncate">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mt-1 mb-3 line-clamp-2">{product.description}</p>
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-blue-600">₹{product.price}</p>
-                    <Link to={`/ProductDetails/${product.id}`} className="text-blue-600 hover:text-blue-800 p-2 bg-blue-50 rounded-full">
-                      <ArrowRight size={18} />
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+             {
+          featuredProducts && featuredProducts.map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))
+        }
           </motion.div>
           
           <div className="text-center mt-12">

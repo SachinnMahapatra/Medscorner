@@ -146,7 +146,7 @@ const ProfilePage = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      await axios.delete("http://127.0.0.1:8000/api/users/delete", {
+      await axios.delete("http://127.0.0.1:8000/api/users/details/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       localStorage.clear();

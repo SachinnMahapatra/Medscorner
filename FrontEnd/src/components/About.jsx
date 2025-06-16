@@ -60,9 +60,9 @@ const About = () => {
                     <UserCircle size={28} className="text-white" />
                   </div>
                   <h3 className="font-bold text-xl text-gray-900 mb-2">Sachin Mahapatra</h3>
-                  <p className="text-blue-600 text-sm mb-3">Content Strategist • 30101222050</p>
+                  <p className="text-blue-600 text-sm mb-3">Frontend Developer • 30101222050</p>
                   <p className="text-gray-600">
-                    Takes on the role of project content strategist. With strong organizational skills, she keeps us on track and ensures that our content is informative and relevant. Her focus on communication and collaboration helps us achieve our goals efficiently.
+                    Our frontend developer, transforming our ideas into a responsive and visually appealing site. With a keen eye for detail and a passion for modern web technologies, he brings our designs to life, making sure our site is both user-friendly and engaging.
                   </p>
                 </div>
                 

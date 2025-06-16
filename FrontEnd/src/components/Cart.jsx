@@ -264,8 +264,8 @@ const Cart = () => {
                     <span>₹{calculateTotal().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Shipping</span>
-                    <span className="text-green-600">Free</span>
+                    {/* <span>Shipping</span>
+                    <span className="text-green-600">Free</span> */}
                   </div>
                   <div className="flex justify-between font-medium text-lg pt-2 border-t border-gray-200">
                     <span>Total</span>

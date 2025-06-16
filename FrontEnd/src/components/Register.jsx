@@ -20,7 +20,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otpCountdown, setOtpCountdown] = useState(0);
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -44,21 +44,22 @@ const Register = () => {
     setError(null)
     setSuccessMessage(null)
     setIsLoading(true);
-    if(formData.password1 !== formData.password2){
+    if (formData.password1 !== formData.password2) {
       setError("Passwords do not match!")
       setIsLoading(false)
       return
     }
-    if(formData.password1.length < 7){
+    if (formData.password1.length < 7) {
       setError("Password must be at least 8 characters!")
       setIsLoading(false)
       return
     }
-    if(!formData.password1.includes('1','2','3','4','5','6','7','8','9','0')){
-      setError("Password must include at least one digit!")
-      setIsLoading(false)
-      return
+    if (!/\d/.test(formData.password1)) {
+      setError("Password must include at least one digit!");
+      setIsLoading(false);
+      return;
     }
+
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/users/create", formData)
       setSuccessMessage("Registration Successful!")
@@ -86,21 +87,21 @@ const Register = () => {
 
   const handleOtp = async (e) => {
     e.preventDefault();
-    
+
     if (otpCountdown > 0) return;
-    
+
     setError(null)
     setSuccessMessage(null)
-    
-    if (formData.email === ''){
+
+    if (formData.email === '') {
       setError("Please provide your email first!")
       return
     }
-    
+
     try {
       await axios.post("http://127.0.0.1:8000/api/otp/", formData);
       setOtpCountdown(60);
-      
+
       const timer = setInterval(() => {
         setOtpCountdown(prev => {
           if (prev <= 1) {
@@ -110,7 +111,7 @@ const Register = () => {
           return prev - 1;
         });
       }, 1000);
-    } catch(error) {
+    } catch (error) {
       console.log("Internal Server Error! Please retry");
       setError("Internal Server Error! Please retry");
     }
@@ -119,8 +120,8 @@ const Register = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-white">
       <NavBar />
-      {successMessage ? <Navigate replace to={"/"}/> : null}
-      
+      {successMessage ? <Navigate replace to={"/"} /> : null}
+
       <div className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-lg">
           <div className="text-center">
@@ -132,20 +133,20 @@ const Register = () => {
               Join MedsCorner for fast and secure medical shopping
             </p>
           </div>
-          
+
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-start">
               <AlertCircle size={16} className="text-red-500 mr-2 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
-          
+
           {successMessage && (
             <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
               <p className="text-sm text-green-700">{successMessage}</p>
             </div>
           )}
-          
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm space-y-4">
               {/* Username Field */}
@@ -169,7 +170,7 @@ const Register = () => {
                   />
                 </div>
               </div>
-              
+
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -189,15 +190,14 @@ const Register = () => {
                     className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-l-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     placeholder="you@example.com"
                   />
-                  <button 
-                    type="button" 
-                    onClick={handleOtp} 
+                  <button
+                    type="button"
+                    onClick={handleOtp}
                     disabled={otpCountdown > 0}
-                    className={`px-4 py-3 border border-l-0 rounded-r-lg flex items-center justify-center min-w-[80px] ${
-                      otpCountdown > 0 
-                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                    className={`px-4 py-3 border border-l-0 rounded-r-lg flex items-center justify-center min-w-[80px] ${otpCountdown > 0
+                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                    }`}
+                      }`}
                   >
                     {otpCountdown > 0 ? (
                       <span>{otpCountdown}s</span>
@@ -210,7 +210,7 @@ const Register = () => {
                   </button>
                 </div>
               </div>
-              
+
               {/* OTP Field */}
               <div>
                 <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1">
@@ -235,7 +235,7 @@ const Register = () => {
                   We've sent a verification code to your email
                 </p>
               </div>
-              
+
               {/* Password Field */}
               <div>
                 <label htmlFor="password1" className="block text-sm font-medium text-gray-700 mb-1">
@@ -268,7 +268,7 @@ const Register = () => {
                   </button>
                 </div>
               </div>
-              
+
               {/* Confirm Password Field */}
               <div>
                 <label htmlFor="password2" className="block text-sm font-medium text-gray-700 mb-1">
@@ -320,9 +320,8 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white font-medium ${
-                  isLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
-                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
+                className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white font-medium ${isLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
               >
                 {isLoading ? (
                   <span className="flex items-center">
@@ -346,17 +345,17 @@ const Register = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="hidden lg:block absolute bottom-0 left-0 right-0 z-[-1] h-1/3 bg-gradient-to-t from-blue-100 to-transparent"></div>
-      
+
       <div className="hidden lg:flex absolute bottom-0 right-0 z-[-1]">
         <HeartPulse className="text-blue-100" size={80} />
       </div>
-      
+
       <div className="hidden lg:flex absolute top-20 left-0 z-[-1]">
         <Pill className="text-blue-100" size={120} />
       </div>
-      
+
       <Footer />
     </div>
   );
