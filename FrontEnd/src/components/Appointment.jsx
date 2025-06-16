@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Appointment = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [doctors, setDoctors] = useState(null);
+  const [doctors, setDoctors] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,16 +21,26 @@ const Appointment = () => {
   const [config, setConfig] = useState(null);
   const [selectedSpecialization, setSelectedSpecialization] = useState("all");
 
+  const specializations = ["all", ...new Set(doctors.map(doctor => doctor.specialization))];
 
-    useEffect(() => {
+  const filteredDoctors = selectedSpecialization === "all" 
+    ? doctors 
+    : doctors.filter(doctor => doctor.specialization === selectedSpecialization);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/api/doctors/');
         if (response.status !== 200) {
           throw new Error('Failed to fetch doctors');
         }
-        setDoctors(response.data);
-        console.log(response.data)
+        const doctorsData = response.data.map(doctor => ({
+          ...doctor,
+          availableDates: Object.values(doctor.availableDates || {}),
+          photo: doctor.photo || `https://ui-avatars.com/api/?name=${doctor.doctorName.replace(/\s+/g, '+')}&background=random`
+        }));
+        setDoctors(doctorsData);
+        console.log(doctorsData);
       } catch (error) {
         console.log(error.message);
       }
@@ -42,60 +52,7 @@ const Appointment = () => {
     : doctors.filter(doctor => doctor.specialization === selectedSpecialization);
    
   }, []);
-  // Sample doctor data
-  // const doctors = [
-  //   {
-  //     id: 1,
-  //     name: "Dr. Sarah Johnson",
-  //     specialization: "Cardiologist",
-  //     photo: "https://randomuser.me/api/portraits/women/65.jpg",
-  //     availableDates: ["Mon, June 5 - 10:00 AM", "Wed, June 7 - 2:30 PM", "Fri, June 9 - 4:00 PM"],
-  //     fees: "₹120",
-  //     experience: "15 years",
-  //     rating: 4.8,
-  //     reviews: 128,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Dr. Michael Chen",
-  //     specialization: "Neurologist",
-  //     photo: "https://randomuser.me/api/portraits/men/32.jpg",
-  //     availableDates: ["Tue, June 6 - 9:00 AM", "Thu, June 8 - 11:30 AM", "Sat, June 10 - 3:00 PM"],
-  //     fees: "₹150",
-  //     experience: "12 years",
-  //     rating: 4.9,
-  //     reviews: 156,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Dr. Priya Patel",
-  //     specialization: "Dermatologist",
-  //     photo: "https://randomuser.me/api/portraits/women/44.jpg",
-  //     availableDates: ["Mon, June 5 - 1:00 PM", "Wed, June 7 - 10:00 AM", "Fri, June 9 - 11:00 AM"],
-  //     fees: "₹90",
-  //     experience: "8 years",
-  //     rating: 4.7,
-  //     reviews: 98,
-      
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Dr. Robert Williams",
-  //     specialization: "Pediatrician",
-  //     photo: "https://randomuser.me/api/portraits/men/75.jpg",
-  //     availableDates: ["Tue, June 6 - 2:00 PM", "Thu, June 8 - 4:30 PM", "Sat, June 10 - 9:30 AM"],
-  //     fees: "₹110",
-  //     experience: "10 years",
-  //     rating: 4.6,
-  //     reviews: 112,
-  //   },
-  // ];
-
-  const specializations = ["all", ...new Set(doctors.map(doctor => doctor.specialization))];
-
-  const filteredDoctors = selectedSpecialization === "all" 
-    ? doctors 
-    : doctors.filter(doctor => doctor.specialization === selectedSpecialization);
+ 
 
   const handleBookNow = (doctor) => {
     setSelectedDoctor(doctor);
@@ -241,7 +198,7 @@ const Appointment = () => {
                   <div className="mb-6">
                     <h4 className="text-sm font-medium text-gray-500 mb-3">Available Slots</h4>
                     <div className="space-y-2">
-                      {doctor.availableDates.map((date, index) => (
+                      {(doctor.availableDates ?? []).map((date, index) => (
                         <div
                           key={index}
                           className="flex items-center text-sm text-gray-700 bg-gray-50 rounded-lg p-2"
@@ -372,7 +329,7 @@ const Appointment = () => {
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                     >
-                      {selectedDoctor?.availableDates.map((date, index) => (
+                      {(selectedDoctor?.availableDates ?? []).map((date, index) => (
                         <option key={index} value={date}>
                           {date}
                         </option>
