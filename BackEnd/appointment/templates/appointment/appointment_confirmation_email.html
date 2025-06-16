@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Confirmation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background: linear-gradient(135deg, #0f766e 0%, #065f46 50%, #064e3b 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .email-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transform: translateY(30px);
+            animation: slideIn 1s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            animation: bounce 2s ease-in-out infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-10px); }
+            75% { transform: translateY(-5px); }
+        }
+        
+        .success-icon svg {
+            width: 45px;
+            height: 45px;
+            fill: white;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 400;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .content {
+            padding: 60px 40px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .greeting {
+            font-size: 1.4rem;
+            color: #059669;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .message {
+            font-size: 1.15rem;
+            color: #4a5568;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        
+        .appointment-card {
+            background: white;
+            border: 2px solid #d1fae5;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 35px 0;
+            box-shadow: 0 15px 35px rgba(5, 150, 105, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #059669, #047857, #065f46);
+        }
+        
+        .appointment-title {
+            font-size: 1.6rem;
+            color: #047857;
+            margin-bottom: 30px;
+            font-weight: 800;
+            text-align: center;
+            position: relative;
+        }
+        
+        .appointment-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #10b981;
+            border-radius: 2px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .detail-item {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 5px solid #10b981;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .detail-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .detail-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+            border-left-color: #047857;
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: #047857;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .detail-value {
+            font-size: 1.2rem;
+            color: #1a202c;
+            font-weight: 600;
+        }
+        
+        .reminder-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+        }
+        
+        .reminder-icon {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: #f59e0b;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+        
+        .reminder-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+        
+        .reminder-text {
+            color: #92400e;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 50px 0 40px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 12px 30px rgba(5, 150, 105, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(5, 150, 105, 0.6);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: #9ca3af;
+            padding: 50px 40px;
+            text-align: center;
+        }
+        
+        .footer-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .footer-text {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .footer-contact {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-contact:hover {
+            color: #059669;
+        }
+        
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .email-container {
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 40px 25px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .content {
+                padding: 40px 25px;
+            }
+            
+            .appointment-card {
+                padding: 30px 20px;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .detail-item {
+                padding: 20px;
+            }
+            
+            .greeting {
+                font-size: 1.2rem;
+            }
+            
+            .message {
+                font-size: 1rem;
+            }
+            
+            .cta-button {
+                padding: 18px 35px;
+                font-size: 1rem;
+            }
+            
+            .footer {
+                padding: 40px 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .success-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .success-icon svg {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .appointment-card {
+                padding: 25px 15px;
+            }
+            
+            .details-grid {
+                gap: 15px;
+            }
+            
+            .detail-item {
+                padding: 18px;
+            }
+            
+            .detail-value {
+                font-size: 1.1rem;
+            }
+            
+            .reminder-section {
+                padding: 25px 20px;
+            }
+            
+            .cta-button {
+                padding: 16px 30px;
+                font-size: 0.95rem;
+                letter-spacing: 1px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .appointment-title {
+                font-size: 1.4rem;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <h1>Appointment Confirmed!</h1>
+                <p>We're ready to see you</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                Hello {{ patient_name }},
+            </div>
+            
+            <div class="message">
+                Wonderful news! Your healthcare appointment with <strong>{{ doctor_name }}</strong> has been successfully scheduled and confirmed. We're excited to provide you with exceptional care.
+            </div>
+            
+            <div class="appointment-card">
+                <div class="appointment-title">
+                    Your Appointment Details
+                </div>
+                
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">📅 Appointment Date</div>
+                        <div class="detail-value">{{ appointment_date }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">🕐 Scheduled Time</div>
+                        <div class="detail-value">{{ appointment_time }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">👨‍⚕️ Healthcare Provider</div>
+                        <div class="detail-value">{{ doctor_name }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">🏥 Medical Specialty</div>
+                        <div class="detail-value">{{ doctor_specialization }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reminder-section">
+                <div class="reminder-icon">⏰</div>
+                <div class="reminder-title">Important Reminders</div>
+                <div class="reminder-text">
+                    Please arrive 15 minutes before your scheduled time for check-in and preparation. If you need to reschedule or cancel your appointment, kindly contact us at least 24 hours in advance to avoid any cancellation fees.
+                </div>
+            </div>
+            
+            <div class="cta-section">
+                <a href="{{ website_link }}" class="cta-button">Visit MedsCorner Portal</a>
+            </div>
+            
+            <div class="message">
+                Thank you for trusting MedsCorner with your healthcare needs. Our dedicated team is committed to delivering personalized, compassionate care that exceeds your expectations.
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-brand">MedsCorner</div>
+            <div class="footer-text">&copy; 2024 MedsCorner Healthcare Solutions. All rights reserved.</div>
+            <div class="footer-text">
+                Need assistance? Reach out to us at 
+                <a href="mailto:support@medscorner.com" class="footer-contact">support@medscorner.com</a>
+            </div>
+            <div class="footer-text">Your health, our priority</div>
+        </div>
+    </div>
+</body>
+</html>

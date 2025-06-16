@@ -95,9 +95,18 @@ const Appointment = () => {
     e.preventDefault();
     if(config) {
       try {
+        console.log("Sending data:", {
+          ...formData,
+          doctorName: selectedDoctor?.doctorName,
+          specialization: selectedDoctor?.specialization
+        });
         const response = await axios.post(
           "http://127.0.0.1:8000/api/appointment/",
-          formData,
+          {
+            ...formData,
+            doctorName: selectedDoctor?.doctorName,
+            specialization: selectedDoctor?.specialization
+          },
           {
             headers: {
               "Content-Type": "multipart/form-data",
