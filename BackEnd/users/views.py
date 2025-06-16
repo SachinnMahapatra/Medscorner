@@ -55,7 +55,7 @@ def generate_otp(request):
         subject="Email Verification"
         
         # Load HTML email template
-        html_message = render_to_string('email_template.html', {'otp': otp})
+        html_message = render_to_string('users/email_template.html', {'otp': otp})
 
         sender = "apnasourav08@gmail.com"
         receiver = [serializer.validated_data["email"]]
