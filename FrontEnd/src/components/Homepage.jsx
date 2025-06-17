@@ -104,6 +104,28 @@ function Homepage() {
           backgroundRepeat: 'no-repeat'
         }}
       >
+        {/* Doctor Logo - Top Right Corner */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="absolute top-6 right-6 z-20 hidden lg:block w-40 h-40 flex items-center justify-center"
+        >
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Blue glowing background effect */}
+            <div className="absolute inset-0 bg-blue-800/60 rounded-full blur-xl animate-pulse"></div>
+            
+            {/* Main logo container - no background, just the image */}
+            <div className="relative w-24 h-24">
+              <img 
+                src="/doctor-logo.png" 
+                alt="Medical Logo" 
+                className="w-full h-full object-contain" 
+              />
+            </div>
+          </div>
+        </motion.div>
+
         {/* Background overlay with medical items */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 to-blue-800/60 z-0">
           <div className="absolute inset-0 opacity-10">
