@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import NavBar from './NavBar';
 import Footer from './Footer';
-import { Search, Phone, MapPin, Clock, Users, Heart, AlertCircle, CheckCircle, Filter } from 'lucide-react';
+import { Search, Phone, MapPin, Clock, Users, Heart, AlertCircle, CheckCircle, Filter, Droplet } from 'lucide-react';
 import bloodBankData from '../assets/blood-bank-json.json';
 
 const BloodBankList = lazy(() => Promise.resolve({
@@ -74,6 +74,7 @@ function BloodBank() {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -81,35 +82,51 @@ function BloodBank() {
         if (!bloodBankData || !Array.isArray(bloodBankData)) {
           throw new Error('Invalid blood bank data format');
         }
-        const parsedData = bloodBankData.map(bank => {
-          if (!bank) return null;
-          return {
-            id: bank["Sr No"] || Math.random().toString(36).substr(2, 9),
-            name: bank["Blood Bank Name"] || 'Unknown Blood Bank',
-            state: bank["State"] || '',
-            district: bank["District"] || '',
-            city: bank["City"] || bank["District"] || '',
-            address: bank["Address"] || '',
-            pincode: bank["Pincode"] || '',
-            phone: bank["Contact No"] || '',
-            mobile: bank["Mobile"] || '',
-            helpline: bank["Helpline"] || '',
-            email: bank["Email"] || '',
-            website: bank["Website"] || '',
-            category: bank["Category"] || '',
-            bloodComponentAvailable: (bank["Blood Component Available"] || '').toUpperCase() === 'YES',
-            apheresis: (bank["Apheresis"] || '').toUpperCase() === 'YES',
-            serviceTime: bank["Service Time"] || '',
-            license: bank["License #"] || '',
-            latitude: bank["Latitude"] || '',
-            longitude: bank["Longitude"] || '',
-            availableBloodGroups: typeof bank["Available Blood Groups"] === 'string'
-              ? bank["Available Blood Groups"].split(',').map(g => g.trim()).filter(Boolean)
-              : []
-          };
-        }).filter(bank => bank && bank.name && (bank.city || bank.district));
-        setBloodBanks(parsedData);
-        const uniqueCities = [...new Set(parsedData.map(bank => bank.city))].filter(Boolean).sort();
+
+        // Process data in chunks to show progress
+        const chunkSize = 50;
+        const chunks = [];
+        for (let i = 0; i < bloodBankData.length; i += chunkSize) {
+          chunks.push(bloodBankData.slice(i, i + chunkSize));
+        }
+
+        let processedData = [];
+        for (let i = 0; i < chunks.length; i++) {
+          const chunk = chunks[i];
+          const processedChunk = chunk.map(bank => {
+            if (!bank) return null;
+            return {
+              id: bank["Sr No"] || Math.random().toString(36).substr(2, 9),
+              name: bank["Blood Bank Name"] || 'Unknown Blood Bank',
+              state: bank["State"] || '',
+              district: bank["District"] || '',
+              city: bank["City"] || bank["District"] || '',
+              address: bank["Address"] || '',
+              pincode: bank["Pincode"] || '',
+              phone: bank["Contact No"] || '',
+              mobile: bank["Mobile"] || '',
+              helpline: bank["Helpline"] || '',
+              email: bank["Email"] || '',
+              website: bank["Website"] || '',
+              category: bank["Category"] || '',
+              bloodComponentAvailable: (bank["Blood Component Available"] || '').toUpperCase() === 'YES',
+              apheresis: (bank["Apheresis"] || '').toUpperCase() === 'YES',
+              serviceTime: bank["Service Time"] || '',
+              license: bank["License #"] || '',
+              latitude: bank["Latitude"] || '',
+              longitude: bank["Longitude"] || '',
+              availableBloodGroups: typeof bank["Available Blood Groups"] === 'string'
+                ? bank["Available Blood Groups"].split(',').map(g => g.trim()).filter(Boolean)
+                : []
+            };
+          }).filter(bank => bank && bank.name && (bank.city || bank.district));
+          
+          processedData = [...processedData, ...processedChunk];
+          setLoadingProgress(((i + 1) / chunks.length) * 100);
+        }
+
+        setBloodBanks(processedData);
+        const uniqueCities = [...new Set(processedData.map(bank => bank.city))].filter(Boolean).sort();
         setCities(uniqueCities);
         setLoading(false);
       } catch (error) {
@@ -151,11 +168,166 @@ function BloodBank() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-blue-50">
         <NavBar />
         <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            {/* Main Loading Container */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="relative w-48 h-48"
+            >
+              {/* Outer Ring */}
+              <motion.div
+                className="absolute inset-0 border-4 border-red-200 rounded-full"
+                animate={{
+                  rotate: 360,
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  rotate: {
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "linear"
+                  },
+                  scale: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }}
+              />
+              
+              {/* Middle Ring */}
+              <motion.div
+                className="absolute inset-4 border-4 border-red-300 rounded-full"
+                animate={{
+                  rotate: -360,
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  rotate: {
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "linear"
+                  },
+                  scale: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.5
+                  }
+                }}
+              />
+
+              {/* Center Content */}
+              <motion.div
+                className="absolute inset-8 flex items-center justify-center"
+                animate={{
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <div className="relative">
+                  <Droplet className="h-16 w-16 text-red-500" />
+                  <motion.div
+                    className="absolute -top-2 -right-2"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 360],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Heart className="h-6 w-6 text-red-400" />
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Floating Particles */}
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-red-400 rounded-full"
+                  initial={{
+                    x: "50%",
+                    y: "50%",
+                    scale: 0,
+                  }}
+                  animate={{
+                    x: [
+                      "50%",
+                      `${50 + 40 * Math.cos((i * Math.PI * 2) / 6)}%`,
+                      "50%",
+                    ],
+                    y: [
+                      "50%",
+                      `${50 + 40 * Math.sin((i * Math.PI * 2) / 6)}%`,
+                      "50%",
+                    ],
+                    scale: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                    ease: "easeInOut",
+                  }}
+                />
+              ))}
+            </motion.div>
+
+            {/* Loading Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-8 text-center"
+            >
+              <motion.h2
+                className="text-2xl font-bold text-gray-800 mb-4"
+                animate={{
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                Loading Blood Banks...
+              </motion.h2>
+              <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${loadingProgress}%` }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500"
+                />
+              </div>
+              <motion.p
+                className="text-gray-600 mt-4"
+                animate={{
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                {Math.round(loadingProgress)}% Complete
+              </motion.p>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -227,7 +399,104 @@ function BloodBank() {
             </p>
           </div>
           {/* Blood Bank List (Lazy Loaded) */}
-          <Suspense fallback={<div className="text-center py-8">Loading blood banks...</div>}>
+          <Suspense fallback={
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white rounded-2xl shadow-xl p-6 flex flex-col justify-between border border-gray-100 min-h-[340px]"
+                >
+                  <div>
+                    <motion.div
+                      className="h-6 w-3/4 bg-gray-200 rounded-lg mb-4"
+                      animate={{
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className="h-4 w-1/2 bg-gray-200 rounded-lg mb-6"
+                      animate={{
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.2
+                      }}
+                    />
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {[...Array(4)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="h-6 w-16 bg-gray-200 rounded-full"
+                          animate={{
+                            opacity: [0.5, 1, 0.5],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: i * 0.1
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <div className="space-y-2">
+                      {[...Array(3)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="h-4 w-3/4 bg-gray-200 rounded-lg"
+                          animate={{
+                            opacity: [0.5, 1, 0.5],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: i * 0.2
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <motion.div
+                      className="flex-1 h-10 bg-gray-200 rounded-lg"
+                      animate={{
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className="flex-1 h-10 bg-gray-200 rounded-lg"
+                      animate={{
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.2
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          }>
             {filteredBloodBanks.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-600">No blood banks found matching your criteria</p>
