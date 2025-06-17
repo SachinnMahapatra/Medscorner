@@ -105,7 +105,7 @@ const Appointment = () => {
           {
             ...formData,
             doctorName: selectedDoctor?.doctorName,
-            specialization: selectedDoctor?.specialization
+            specialization: selectedDoctor?.specialization,         
           },
           {
             headers: {
@@ -176,8 +176,8 @@ const Appointment = () => {
                     <div className="relative">
                       <img
                         className="h-20 w-20 rounded-full object-cover ring-4 ring-blue-100"
-                        src={doctor.photo}
-                        alt={doctor.name}
+                        src={`http://127.0.0.1:8000/${doctor.photo}`}
+                        alt={doctor.doctorName}
                         onError={(e) => {
                           e.target.src = `https://ui-avatars.com/api/?name=${doctor.name.replace(/\s+/g, '+')}&background=random`;
                         }}
@@ -189,7 +189,7 @@ const Appointment = () => {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <h3 className="text-lg font-semibold text-gray-900">{doctor.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">{doctor.doctorName}</h3>
                       <p className="text-sm text-blue-600 font-medium">{doctor.specialization}</p>
                       <div className="flex items-center mt-1">
                         <div className="flex items-center">

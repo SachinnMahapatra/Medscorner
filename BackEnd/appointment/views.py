@@ -26,7 +26,6 @@ def bookAppointment(request):
         # Get doctor information directly from request data
         doctor_name = request.data.get('doctorName', 'Not specified')
         doctor_specialization = request.data.get('specialization', 'Not specified')
-
         # email variables
         subject="Appointment Confirmation - MedsCorner"
         
@@ -66,3 +65,17 @@ def doctors(request):
     serializer = doctorSerializer(doc, many=True)
     
     return Response(serializer.data)
+
+@api_view(['POST'])
+def adddoctors(request):
+   
+    data = request.data.copy()
+    
+    serializer = doctorSerializer(data=data)
+    
+    if serializer.is_valid():
+            
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
