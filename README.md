@@ -31,4 +31,24 @@
 - **College**: B. P. Poddar Institute of Management & Technology  
 - **University**: Maulana Abul Kalam Azad University of Technology
 
+## ⚙️ Project Setup & Run Instructions
 
+- Go to the `backend` directory  
+- Install dependencies using:
+
+  pip install -r requirements.txt
+
+- Run the server using:
+
+  python manage.py runserver
+
+- Then go to the `frontend` directory  
+- Install packages using:
+
+  npm install
+
+- Start the frontend with:
+
+  npm run dev
+
+✅ Make sure Python, Django, Node.js, and npm are properly installed and configured on your system.
