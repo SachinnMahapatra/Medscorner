@@ -23,8 +23,8 @@
 | Sachin Mahapatra   | Front-end Developer, UI Designer | 30101222050 |
 | Priya Panda        | UI/UX Designer          | 30101222046 |
 | Sourav Mondal      | Backend Developer       | 30101222045 |
-| Sourav Mondal      | Content Strategist      | 30101222017 |
-| SK Aman Hossain    | Project Manager         | 30101222047 |
+| Sourav Mondal      | Testing     | 30101222017 |
+| SK Aman Hossain    | Information Gathering         | 30101222047 |
 
 ## 🏫 Institution
 
